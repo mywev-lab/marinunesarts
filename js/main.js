@@ -120,6 +120,19 @@
     });
   }
 
+  /* ---------- Site aberto direto do arquivo (sem servidor) ----------
+     Os endereços do blog terminam em "/" (ex.: blog/). No site publicado o
+     servidor abre o index.html da pasta; aberto do computador, o navegador
+     mostraria a lista de arquivos. Aqui completamos esses links com index.html. */
+  if (location.protocol === "file:") {
+    document.querySelectorAll("a[href]").forEach((a) => {
+      const href = a.getAttribute("href");
+      if (/^(?:[a-z]+:|#)/i.test(href)) return;
+      const [path, hash] = href.split("#");
+      if (path.endsWith("/")) a.setAttribute("href", `${path}index.html${hash !== undefined ? `#${hash}` : ""}`);
+    });
+  }
+
   /* ---------- Ano no rodapé ---------- */
   document.querySelectorAll("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
 })();

@@ -31,7 +31,7 @@ Site de Mariane Nunes: pinturas em aquarela e giz pastel oleoso, impressões e p
    npm run build
    ```
 
-3. Para ver o site no computador, rode `npm start` e abra o endereço que aparecer. (Abrir o `index.html` direto também funciona, mas os links do blog terminam em `/` e só abrem certinho com o `npm start` ou no site publicado.)
+3. Para ver o site no computador, abra o `index.html` no navegador ou rode `npm start`. (Os endereços do blog terminam em `/`; quando o site é aberto direto do arquivo, o `js/main.js` completa esses links com `index.html` para eles funcionarem.)
 
 ## Blog (Diário do Ateliê)
 
