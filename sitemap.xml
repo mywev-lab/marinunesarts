@@ -91,6 +91,31 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.marinunesarts.com/blog/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.marinunesarts.com/blog/giz-pastel-oleoso/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.marinunesarts.com/blog/pintura-aquarela-iniciantes/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.marinunesarts.com/blog/o-que-e-impressionismo/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.marinunesarts.com/blog/como-usar-planner-digital/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.marinunesarts.com/sobre.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

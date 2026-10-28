@@ -1,8 +1,9 @@
 // =========================================================
 // Mari Nunes Arts — gerador do site estático
 // Uso:  node scripts/build-site.mjs
-// Lê o conteúdo de scripts/site-data.mjs e gera todas as páginas HTML,
-// incluindo uma página para cada obra e cada produto digital.
+// Lê o conteúdo de scripts/site-data.mjs e scripts/blog-data.mjs e gera
+// todas as páginas HTML: uma para cada obra, cada produto digital e cada
+// artigo do blog (texto em content/blog/<slug>.html).
 // Não precisa instalar nada além do Node.
 // =========================================================
 
@@ -10,6 +11,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { SITE, FILTERS, WORKS, HOME_STUDIO, SHOP_WORKS, DIGITAL, HOW_TO_USE } from "./site-data.mjs";
+import { BLOG, CATEGORIES, POSTS } from "./blog-data.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const YEAR = new Date().getFullYear();
@@ -94,11 +96,12 @@ const NAV = [
   ["index.html", "Início", "inicio"],
   ["portfolio.html", "Portfólio", "portfolio"],
   ["produtos.html", "Produtos", "produtos"],
+  ["blog/", "Blog", "blog"],
   ["sobre.html", "Sobre", "sobre"],
   ["contato.html", "Contato", "contato"],
 ];
 
-function head({ title, description, canonical, ogImage = "images/hero/hero-og.jpg", root = "", jsonld = [], preload = "", noindex = false, ogType = "website" }) {
+function head({ title, description, canonical, ogImage = "images/hero/hero-og.jpg", root = "", jsonld = [], preload = "", noindex = false, ogType = "website", extraMeta = "" }) {
   return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -116,7 +119,10 @@ function head({ title, description, canonical, ogImage = "images/hero/hero-og.jp
 <meta property="og:url" content="${abs(canonical)}">
 <meta property="og:image" content="${abs(ogImage)}">
 <meta property="og:locale" content="pt_BR">
-<meta name="twitter:card" content="summary_large_image">
+${extraMeta}<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(title)}">
+<meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="${abs(ogImage)}">
 <link rel="icon" type="image/png" sizes="32x32" href="${root}images/icons/favicon-32.png">
 <link rel="apple-touch-icon" href="${root}images/icons/apple-touch-icon.png">
 <meta name="theme-color" content="#F5F0E6">
@@ -264,9 +270,14 @@ const breadcrumbLd = (items) => ({
   itemListElement: items.map(([href, label], i) => ({ "@type": "ListItem", position: i + 1, name: label, item: abs(href) })),
 });
 
+// Identificador único da autora, usado em todas as páginas (Sobre, blog, artigos)
+const PERSON_ID = `${SITE.url}/sobre.html#mariane-nunes`;
+const authorRef = { "@type": "Person", "@id": PERSON_ID, name: "Mariane Nunes", url: abs("sobre.html") };
+
 const personLd = {
   "@context": "https://schema.org",
   "@type": "Person",
+  "@id": PERSON_ID,
   name: "Mariane Nunes",
   alternateName: SITE.name,
   jobTitle: "Artista visual",
@@ -278,6 +289,119 @@ const personLd = {
   address: { "@type": "PostalAddress", addressLocality: "São Paulo", addressRegion: "SP", addressCountry: "BR" },
   sameAs: [SITE.instagram, SITE.etsy, ...(SITE.pinterest ? [SITE.pinterest] : [])],
 };
+
+/* ---------------- blog: helpers ---------------- */
+const postBySlug = (slug) => POSTS.find((p) => p.slug === slug);
+const categoryById = (id) => CATEGORIES.find((c) => c.id === id);
+
+// Artigo do blog que explica a técnica de uma obra (usado nas páginas das obras)
+function techniquePost(w) {
+  if (/^giz pastel oleoso/i.test(w.technique)) return postBySlug("giz-pastel-oleoso");
+  if (/^aquarela/i.test(w.technique)) return postBySlug("pintura-aquarela-iniciantes");
+  return null;
+}
+
+// Tamanhos gerados para cada pasta de imagens
+const widthsFor = (src) =>
+  src.startsWith("products/") ? [600, 1200] : src.startsWith("blog/") ? [480, 800, 1200, 1600] : [480, 800, 1200];
+
+// Texto alternativo automático para obras e fotos de produtos já cadastradas
+function altFor(src) {
+  const w = WORKS.find((o) => `art/${o.file}` === src);
+  if (w) return w.alt;
+  for (const p of DIGITAL) {
+    const im = p.images.find((i) => i.file === src);
+    if (im) return im.alt;
+  }
+  return "";
+}
+
+/**
+ * Figura dos artigos. kind: "art" (obra no passe-partout), "wide" (imagem inteira), "product" (quadrada).
+ */
+function figure({ root, src, alt, caption = "", kind, widths, sizes, eager = false, cls = "post-figure" }) {
+  const k = kind || (src.startsWith("products/") ? "product" : src.startsWith("art/") ? "art" : "wide");
+  const defaultSizes = { art: "(max-width: 760px) 70vw, 340px", wide: "(max-width: 760px) 92vw, 680px", product: "(max-width: 760px) 92vw, 560px" };
+  const pic = picture({
+    root,
+    base: src,
+    widths: widths || widthsFor(src),
+    sizes: sizes || defaultSizes[k],
+    alt: alt ?? altFor(src),
+    eager,
+    maxFallback: k === "wide" ? 1200 : 800,
+  });
+  return `<figure class="${cls} ${cls}--${k}"><div class="${cls}-frame">${pic}</div>${caption ? `<figcaption>${caption}</figcaption>` : ""}</figure>`;
+}
+
+const MONTHS = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+const fmtDate = (iso) => {
+  const [y, m, d] = iso.split("-").map(Number);
+  return `${d} de ${MONTHS[m - 1]} de ${y}`;
+};
+
+/**
+ * Lê content/blog/<slug>.html, troca {{root}} e {{fig ...}}, remove as anotações
+ * <!-- REVISAR --> e devolve o HTML, o sumário (h2) e o número de palavras.
+ */
+function renderPostBody(post, root) {
+  const file = path.join(ROOT, "content/blog", `${post.slug}.html`);
+  let html = readFileSync(file, "utf8");
+  const notes = [];
+  html = html.replace(/<!--\s*REVISAR([\s\S]*?)-->\s*/g, (_, t) => {
+    notes.push(t.replace(/^\s*\(Mari\)/, "").replace(/^\s*:\s*/, "").trim());
+    return "";
+  });
+  html = html.replaceAll("{{root}}", root);
+  html = html.replace(/\{\{fig\s+([\s\S]*?)\}\}/g, (_, attrs) => {
+    const a = {};
+    attrs.replace(/(\w+)="([^"]*)"/g, (__, k, v) => {
+      a[k] = v.replace(/&quot;/g, '"');
+    });
+    return figure({
+      root,
+      src: a.src,
+      alt: a.alt,
+      caption: a.caption || "",
+      kind: a.kind,
+      widths: a.widths ? a.widths.split(",").map(Number) : undefined,
+    });
+  });
+  // tabelas largas rolam para os lados no celular: a área precisa ser acessível pelo teclado
+  html = html.replace(/<div class="table-wrap">(\s*<table>\s*<caption>([^<]*)<\/caption>)/g, (_, rest, cap) => `<div class="table-wrap" tabindex="0" role="region" aria-label="${esc(cap)}">${rest}`);
+  const toc = [...html.matchAll(/<h2 id="([^"]+)">([\s\S]*?)<\/h2>/g)].map((m) => [m[1], m[2].replace(/<[^>]+>/g, "")]);
+  const words = html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+  return { html, toc, words, notes };
+}
+
+// Pré-processa os artigos (o tempo de leitura aparece nos cards)
+for (const post of POSTS) {
+  post.rendered = renderPostBody(post, "../../");
+  post.readingTime = Math.max(1, Math.round(post.rendered.words / 200));
+}
+
+function postCard(post, root, { wide = false } = {}) {
+  const cat = categoryById(post.category);
+  const isProduct = post.cover.kind === "product";
+  return `<article class="card post-card${wide ? " post-card--wide" : ""}">
+  <a class="card-link" href="${root}blog/${post.slug}/">
+    <div class="card-mat${isProduct ? " card-mat--product" : ""}">${picture({
+      root,
+      base: post.cover.src,
+      widths: isProduct ? [600, 1200] : [480, 800],
+      sizes: wide ? "(max-width: 760px) 92vw, 36vw" : "(max-width: 600px) 92vw, (max-width: 1000px) 46vw, 30vw",
+      alt: post.cover.alt,
+      maxFallback: isProduct ? 600 : 800,
+    })}</div>
+    <div class="card-body">
+      <p class="post-card-cat">${esc(cat.name)}</p>
+      <h3 class="card-title">${esc(post.title)}</h3>
+      <p class="card-meta">${esc(post.excerpt)}</p>
+      <p class="card-foot"><span class="card-tag">Leitura de ${post.readingTime} min</span></p>
+    </div>
+  </a>
+</article>`;
+}
 
 /* ---------------- pages ---------------- */
 const out = [];
@@ -457,6 +581,7 @@ ${specs.map(([k, v]) => `      <div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join
     ${w.etsy?.note ? `<p class="work-note">${esc(w.etsy.note)}</p>` : ""}
     <div class="work-actions">${actions}</div>
     ${w.instagram ? `<a class="text-link" href="${w.instagram}" target="_blank" rel="noopener">Ver a publicação no Instagram</a>` : ""}
+    ${techniquePost(w) ? `<p class="work-read">Sobre a técnica, no Diário do Ateliê: <a href="${root}blog/${techniquePost(w).slug}/">${esc(techniquePost(w).title)}</a></p>` : ""}
   </div>
 </article>
 ${
@@ -508,7 +633,7 @@ ${related.map((o) => workCard(o, root)).join("\n")}
             artform: "Pintura",
             artMedium: w.technique,
             ...(w.year ? { dateCreated: w.year } : {}),
-            creator: { "@type": "Person", name: "Mariane Nunes" },
+            creator: authorRef,
             image: abs(firstImageUrl(`art/${w.file}`)),
             description: w.description.join(" "),
             url: abs(`obras/${w.slug}.html`),
@@ -620,6 +745,7 @@ ${p.includes.map((t) => `        <li>${esc(t)}</li>`).join("\n")}
 ${HOW_TO_USE.map((t) => `        <li>${esc(t)}</li>`).join("\n")}
       </ol>
       <p class="work-note">Produto digital: nada é enviado pelo correio. O tablet, a caneta e os apps não estão incluídos.</p>
+      ${postBySlug("como-usar-planner-digital") ? `<p class="work-read">Guia completo, no Diário do Ateliê: <a href="${root}blog/como-usar-planner-digital/">${esc(postBySlug("como-usar-planner-digital").title)}</a></p>` : ""}
     </div>
   </div>
 </section>
@@ -857,6 +983,225 @@ ${DIGITAL.map((p) => `          <option value="${esc(p.name)}">${esc(p.name)}</o
   );
 }
 
+/* ---- Blog: página principal ---- */
+const BLOG_ID = `${abs("blog/")}#blog`;
+{
+  const root = "../";
+  const activeCats = CATEGORIES.filter((c) => POSTS.some((p) => p.category === c.id));
+  const count = (id) => POSTS.filter((p) => p.category === id).length;
+  const main = `<section class="page-intro blog-intro">
+  <div class="container">
+    <h1>${esc(BLOG.title)}</h1>
+    <p class="page-lede">${esc(BLOG.intro)}</p>
+    <nav class="blog-cats" aria-label="Categorias do blog">
+      <ul>
+${activeCats
+  .map(
+    (c) =>
+      `        <li><a href="#${c.id}">${esc(c.name)}<span class="blog-cats-count">${count(c.id)}<span class="visually-hidden"> ${count(c.id) === 1 ? "artigo" : "artigos"}</span></span></a></li>`
+  )
+  .join("\n")}
+      </ul>
+    </nav>
+  </div>
+</section>
+${activeCats
+  .map((c) => {
+    const posts = POSTS.filter((p) => p.category === c.id);
+    return `<section class="section section--tight blog-section" id="${c.id}" aria-labelledby="${c.id}-title">
+  <div class="container">
+  ${sectionHead({ id: `${c.id}-title`, title: esc(c.name), lede: esc(c.description) })}
+  <div class="post-grid${posts.length === 1 ? " post-grid--single" : ""}">
+${posts.map((p) => postCard(p, root, { wide: posts.length === 1 })).join("\n")}
+  </div>
+  </div>
+</section>`;
+  })
+  .join("\n")}
+${newsletter()}`;
+  write(
+    "blog/index.html",
+    page({
+      root,
+      current: "blog",
+      bodyClass: "page-blog",
+      headOpts: {
+        title: BLOG.seoTitle,
+        description: BLOG.description,
+        canonical: "blog/",
+        ogImage: firstImageUrl(POSTS[0].cover.src),
+        jsonld: [
+          {
+            "@context": "https://schema.org",
+            "@type": "Blog",
+            "@id": BLOG_ID,
+            name: BLOG.title,
+            description: BLOG.description,
+            url: abs("blog/"),
+            inLanguage: "pt-BR",
+            author: authorRef,
+            publisher: authorRef,
+            blogPost: POSTS.map((p) => ({
+              "@type": "BlogPosting",
+              "@id": `${abs(`blog/${p.slug}/`)}#artigo`,
+              headline: p.title,
+              url: abs(`blog/${p.slug}/`),
+              image: abs(firstImageUrl(p.cover.src)),
+              author: authorRef,
+              ...(p.published ? { datePublished: p.published } : {}),
+            })),
+          },
+          breadcrumbLd([["index.html", "Início"], ["blog/", "Blog"]]),
+        ],
+      },
+      main,
+    })
+  );
+}
+
+/* ---- Blog: página de cada artigo ---- */
+POSTS.forEach((post) => {
+  const root = "../../";
+  const cat = categoryById(post.category);
+  const { html, toc, words } = post.rendered;
+  const related = post.related.map(postBySlug).filter(Boolean);
+  const url = `blog/${post.slug}/`;
+  const crumbs = [["index.html", "Início"], ["blog/", "Blog"], [url, post.title]];
+  const coverSizes = { wide: "(max-width: 1040px) 92vw, 980px", art: "(max-width: 760px) 80vw, 460px", product: "(max-width: 760px) 92vw, 600px" };
+  const dateLine = post.published
+    ? `<span>${post.updated ? "Atualizado em " : "Publicado em "}<time datetime="${post.updated || post.published}">${fmtDate(post.updated || post.published)}</time></span>`
+    : "";
+  const sources = post.sources.length
+    ? `<section class="post-sources" aria-labelledby="fontes-title">
+        <h2 id="fontes-title">Fontes</h2>
+        <ol>
+${post.sources.map((s) => `          <li><a href="${s.url}" target="_blank" rel="noopener">${esc(s.title)}</a>, ${esc(s.publisher)}</li>`).join("\n")}
+        </ol>
+      </section>`
+    : "";
+  const main = `<div class="post-wrap">
+  ${breadcrumb(root, crumbs)}
+</div>
+<article class="post">
+  <header class="post-wrap post-header">
+    <a class="post-category" href="${root}blog/#${cat.id}">${esc(cat.name)}</a>
+    <h1>${esc(post.title)}</h1>
+    <p class="post-dek">${esc(post.dek)}</p>
+    <p class="post-byline"><span>Por <a href="${root}sobre.html" rel="author">Mariane Nunes</a></span>${dateLine}<span>Leitura de ${post.readingTime} minutos</span></p>
+  </header>
+  <div class="post-wrap">
+    ${figure({
+      root,
+      src: post.cover.src,
+      alt: post.cover.alt,
+      caption: (post.cover.caption || "").replaceAll("{{root}}", root),
+      kind: post.cover.kind,
+      sizes: coverSizes[post.cover.kind],
+      eager: true,
+      cls: "post-cover",
+    })}
+  </div>
+  <div class="post-wrap post-layout">
+    <nav class="post-toc" aria-labelledby="toc-title">
+      <p class="post-toc-title" id="toc-title">Neste artigo</p>
+      <ol>
+${toc.map(([id, t]) => `        <li><a href="#${id}">${esc(t)}</a></li>`).join("\n")}
+      </ol>
+    </nav>
+    <div class="post-body">
+${html}
+      ${sources}
+      <aside class="author-box" aria-labelledby="autora-title">
+        ${picture({ root, base: "profile/mariane", widths: [480], sizes: "96px", alt: "Retrato de Mariane Nunes" })}
+        <div>
+          <h2 class="h3" id="autora-title">Sobre a autora</h2>
+          <p>Mariane Nunes é artista visual em São Paulo. Pinta principalmente em aquarela e giz pastel oleoso, inspirada em Monet, Degas e Van Gogh, e cria planners digitais inspirados em grandes pintores.</p>
+          <a class="text-link" href="${root}sobre.html">Conheça a história da Mari</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</article>
+<section class="section section--tight" aria-labelledby="cta-title">
+  <div class="container commission post-cta">
+    <h2 id="cta-title">${esc(post.cta.title)}</h2>
+    <p>${esc(post.cta.text)}</p>
+    <a class="btn btn-primary" href="${root}${post.cta.href}">${esc(post.cta.label)}</a>
+  </div>
+</section>
+${
+  related.length
+    ? `<section class="section section--mist" aria-labelledby="continue-title">
+  <div class="container">
+  ${sectionHead({ id: "continue-title", title: "Continue lendo", link: [`${root}blog/`, "Ver todos os artigos"] })}
+  <div class="post-grid">
+${related.map((r) => postCard(r, root)).join("\n")}
+  </div>
+  </div>
+</section>`
+    : ""
+}`;
+
+  const lastDate = post.updated || post.published;
+  write(
+    `${url}index.html`,
+    page({
+      root,
+      current: "blog",
+      bodyClass: "page-post",
+      headOpts: {
+        title: post.seoTitle,
+        description: post.description,
+        canonical: url,
+        ogImage: firstImageUrl(post.cover.src),
+        ogType: "article",
+        extraMeta: [
+          `<meta property="article:section" content="${esc(cat.name)}">`,
+          `<meta property="article:author" content="${abs("sobre.html")}">`,
+          post.published ? `<meta property="article:published_time" content="${post.published}">` : "",
+          lastDate ? `<meta property="article:modified_time" content="${lastDate}">` : "",
+        ]
+          .filter(Boolean)
+          .map((m) => m + "\n")
+          .join(""),
+        jsonld: [
+          {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "@id": `${abs(url)}#artigo`,
+            headline: post.title,
+            description: post.description,
+            image: [abs(firstImageUrl(post.cover.src))],
+            author: authorRef,
+            publisher: authorRef,
+            url: abs(url),
+            mainEntityOfPage: abs(url),
+            inLanguage: "pt-BR",
+            articleSection: cat.name,
+            keywords: post.keywords.join(", "),
+            wordCount: words,
+            isPartOf: { "@type": "Blog", "@id": BLOG_ID, name: BLOG.title, url: abs("blog/") },
+            ...(post.published ? { datePublished: post.published } : {}),
+            ...(lastDate ? { dateModified: lastDate } : {}),
+            ...(post.sources.length
+              ? {
+                  citation: post.sources.map((s) => ({
+                    "@type": "CreativeWork",
+                    name: s.title,
+                    url: s.url,
+                    publisher: { "@type": "Organization", name: s.publisher },
+                  })),
+                }
+              : {}),
+          },
+          breadcrumbLd(crumbs),
+        ],
+      },
+      main,
+    })
+  );
+});
+
 /* ---- Sitemap ---- */
 {
   const urls = [
@@ -865,6 +1210,8 @@ ${DIGITAL.map((p) => `          <option value="${esc(p.name)}">${esc(p.name)}</o
     ["portfolio.html", "weekly", "0.9"],
     ...DIGITAL.map((p) => [`produtos/${p.slug}.html`, "monthly", "0.8"]),
     ...WORKS.map((w) => [`obras/${w.slug}.html`, "monthly", "0.7"]),
+    ["blog/", "weekly", "0.8"],
+    ...POSTS.map((p) => [`blog/${p.slug}/`, "monthly", "0.7", p.updated || p.published]),
     ["sobre.html", "monthly", "0.6"],
     ["contato.html", "yearly", "0.5"],
   ];
@@ -872,7 +1219,12 @@ ${DIGITAL.map((p) => `          <option value="${esc(p.name)}">${esc(p.name)}</o
     path.join(ROOT, "sitemap.xml"),
     `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(([u, f, p]) => `  <url>\n    <loc>${SITE.url}/${u}</loc>\n    <changefreq>${f}</changefreq>\n    <priority>${p}</priority>\n  </url>`).join("\n")}
+${urls
+  .map(
+    ([u, f, p, lastmod]) =>
+      `  <url>\n    <loc>${SITE.url}/${u}</loc>\n${lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : ""}    <changefreq>${f}</changefreq>\n    <priority>${p}</priority>\n  </url>`
+  )
+  .join("\n")}
 </urlset>
 `
   );
@@ -881,3 +1233,9 @@ ${urls.map(([u, f, p]) => `  <url>\n    <loc>${SITE.url}/${u}</loc>\n    <change
 
 console.log(`Site gerado: ${out.length} arquivos`);
 out.forEach((f) => console.log("  " + f));
+
+// Anotações para revisão nos artigos (não aparecem no site)
+const pending = POSTS.flatMap((p) => p.rendered.notes.map((n) => `  [${p.slug}] ${n}`));
+const undated = POSTS.filter((p) => !p.published).map((p) => p.slug);
+if (pending.length) console.log(`\nAnotações REVISAR nos artigos (${pending.length}):\n${pending.join("\n")}`);
+if (undated.length) console.log(`\nArtigos sem data de publicação (preencha "published" em scripts/blog-data.mjs ao publicar): ${undated.join(", ")}`);

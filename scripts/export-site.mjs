@@ -16,7 +16,7 @@ const OUT = path.join(ROOT, "public");
 await import("./build-site.mjs");
 
 // 2. copia para public/ só o que faz parte do site
-const DIRS = ["obras", "produtos", "css", "js", "images"];
+const DIRS = ["obras", "produtos", "blog", "css", "js", "images"];
 const FILES = ["robots.txt", "sitemap.xml"];
 const pages = readdirSync(ROOT).filter((f) => f.endsWith(".html"));
 
