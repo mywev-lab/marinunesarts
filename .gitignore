@@ -1,0 +1,15 @@
+node_modules/
+
+# Originais em alta resolução: ficam só no computador
+peças/
+mockups/
+minha-foto-para-sobre-mim.jpeg
+
+# Cópia de segurança e configurações locais
+_versao-anterior/
+.claude/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+desktop.ini
