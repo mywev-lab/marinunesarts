@@ -64,7 +64,7 @@ export const POSTS = [
       alt: "Veneza ao Entardecer: giz pastel oleoso retratando uma gôndola atracada em Veneza sob um céu intenso em tons de laranja e azul",
       caption: 'Veneza ao Entardecer (2025), giz pastel oleoso sobre papel. <a href="{{root}}obras/veneza-ao-entardecer.html">Ver a obra</a>',
     },
-    published: null,
+    published: "2026-10-28",
     updated: null,
     related: ["pintura-aquarela-iniciantes", "o-que-e-impressionismo"],
     cta: {
@@ -98,7 +98,7 @@ export const POSTS = [
       alt: "Refúgio Violeta: aquarela de uma casa de campo diante de uma grande montanha violeta ao entardecer, com campo verde e flores silvestres",
       caption: 'Refúgio Violeta (2025), aquarela sobre papel. <a href="{{root}}obras/refugio-violeta.html">Ver a obra</a>',
     },
-    published: null,
+    published: "2026-10-28",
     updated: null,
     related: ["giz-pastel-oleoso", "o-que-e-impressionismo"],
     cta: {
@@ -137,7 +137,7 @@ export const POSTS = [
       caption:
         "Claude Monet, <em>Caminhada no penhasco em Pourville</em>, 1882. Óleo sobre tela. The Art Institute of Chicago, coleção memorial Mr. and Mrs. Lewis Larned Coburn (domínio público).",
     },
-    published: null,
+    published: "2026-10-28",
     updated: null,
     related: ["giz-pastel-oleoso", "como-usar-planner-digital"],
     cta: {
@@ -173,7 +173,7 @@ export const POSTS = [
       alt: "Páginas diária, semanal e mensal do planner digital En Plein Air abertas em três tablets",
       caption: 'Páginas diária, semanal e mensal do planner <a href="{{root}}produtos/planner-en-plein-air.html">En Plein Air</a>.',
     },
-    published: null,
+    published: "2026-10-28",
     updated: null,
     related: ["o-que-e-impressionismo", "giz-pastel-oleoso"],
     cta: {
