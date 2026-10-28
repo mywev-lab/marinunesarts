@@ -1067,7 +1067,7 @@ POSTS.forEach((post) => {
   const related = post.related.map(postBySlug).filter(Boolean);
   const url = `blog/${post.slug}/`;
   const crumbs = [["index.html", "Início"], ["blog/", "Blog"], [url, post.title]];
-  const coverSizes = { wide: "(max-width: 1040px) 92vw, 980px", art: "(max-width: 760px) 80vw, 460px", product: "(max-width: 760px) 92vw, 600px" };
+  const coverSizes = { wide: "(max-width: 1000px) 92vw, 820px", art: "(max-width: 760px) 80vw, 460px", product: "(max-width: 760px) 92vw, 600px" };
   const dateLine = post.published
     ? `<span>${post.updated ? "Atualizado em " : "Publicado em "}<time datetime="${post.updated || post.published}">${fmtDate(post.updated || post.published)}</time></span>`
     : "";
@@ -1089,7 +1089,7 @@ ${post.sources.map((s) => `          <li><a href="${s.url}" target="_blank" rel=
     <p class="post-dek">${esc(post.dek)}</p>
     <p class="post-byline"><span>Por <a href="${root}sobre.html" rel="author">Mariane Nunes</a></span>${dateLine}<span>Leitura de ${post.readingTime} minutos</span></p>
   </header>
-  <div class="post-wrap">
+  <div class="post-wrap post-layout">
     ${figure({
       root,
       src: post.cover.src,
@@ -1100,8 +1100,6 @@ ${post.sources.map((s) => `          <li><a href="${s.url}" target="_blank" rel=
       eager: true,
       cls: "post-cover",
     })}
-  </div>
-  <div class="post-wrap post-layout">
     <nav class="post-toc" aria-labelledby="toc-title">
       <p class="post-toc-title" id="toc-title">Neste artigo</p>
       <ol>
