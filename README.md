@@ -2,65 +2,104 @@
 
 Site de Mariane Nunes: pinturas em aquarela e giz pastel oleoso, impressões e planners digitais.
 
-É um site estático (só HTML, CSS e JavaScript), publicado pela Vercel: a cada envio para a branch `main`, a Vercel roda `node scripts/export-site.mjs` e publica a pasta `public/`.
+O site tem um **painel de conteúdo** (Payload CMS) em **`/admin`**: textos, obras, produtos, imagens e artigos do blog são editados por lá, sem mexer em código. Quando você salva, o site atualiza em poucos segundos.
 
-## Estrutura
+| Parte | Onde fica |
+| --- | --- |
+| Site e painel | Next.js + Payload CMS, publicado pela Vercel (região São Paulo) |
+| Conteúdo (textos, obras, artigos) | Banco de dados Postgres no Supabase (projeto `marinunesarts-cms`) |
+| Imagens enviadas pelo painel | Supabase Storage, pasta (bucket) `media` |
+| Código | GitHub, `mywev-lab/marinunesarts` |
+
+## Como editar pelo painel
+
+Entre em **https://marinunesarts.vercel.app/admin** com seu e-mail e senha. O menu da esquerda está organizado assim:
+
+| Grupo | O que tem |
+| --- | --- |
+| **Portfólio e loja** | **Obras** (cada pintura: imagem, técnica, ano, medidas, status, link da Etsy, fotos "na parede") e **Produtos digitais** (planners: preço, fotos, especificações, o que vem incluído) |
+| **Blog** | **Artigos** do Diário do Ateliê e **Categorias do blog** |
+| **Páginas** | Textos de cada página: Página inicial, Sobre, Portfólio, Produtos, Blog, Contato e Política de privacidade |
+| **Configurações** | **Configurações do site** (e-mail, cidade, redes sociais, texto do rodapé, newsletter, imagem de compartilhamento), **Imagens** e **Usuários** |
+
+Algumas dicas:
+
+- **Ordem das obras e produtos:** o campo "Ordem" na lateral define a posição no site (números menores aparecem primeiro).
+- **Obras na página inicial e na loja:** na lateral da obra, marque "Mostrar em 'Do ateliê' na página inicial" e "Mostrar na página Produtos (obras à venda)".
+- **Imagens:** todo envio pede um texto alternativo (descrição da imagem para quem usa leitor de tela e para o Google). O painel gera sozinho as versões menores e mais leves que o site usa.
+- **Endereço (slug):** é preenchido a partir do título. Se mudar o slug de uma página que já está no ar, o endereço antigo deixa de funcionar.
+
+### Artigos do blog
+
+1. Em **Blog → Artigos**, clique em **Criar novo**.
+2. Aba **Conteúdo**: título, subtítulo, capa e o texto do artigo. No texto, use **Título 2** para as seções (o sumário "Neste artigo" é montado sozinho a partir delas) e o botão **+** para inserir blocos:
+   - **Destaque (Em resumo)**: a caixa de resumo
+   - **Imagem com legenda**
+   - **Linha de obras**: de 2 a 4 imagens lado a lado
+   - **Tabela**
+3. Aba **Cartão e SEO**: resumo do cartão, título para o Google (até ~60 caracteres), descrição para o Google (até ~160) e palavras-chave.
+4. Aba **Fechamento**: chamada no fim do artigo, fontes e até 3 artigos em "Continue lendo".
+5. Na lateral, escolha a **categoria**. O campo **Anotações para revisão** não aparece no site: use para lembretes.
+6. **Salvar rascunho** guarda sem publicar. **Publicar** coloca no ar; o campo "Publicado em" é preenchido sozinho. Se atualizar um artigo publicado, preencha "Atualizado em".
+
+O painel guarda as versões anteriores de cada artigo (aba **Versões**), e dá para restaurar uma delas.
+
+## Endereços
+
+O site usa endereços sem `.html`: `/portfolio`, `/obras/limoes`, `/produtos/planner-luminous-days`, `/blog/giz-pastel-oleoso`, `/sobre`, `/contato`. Os endereços antigos (`/portfolio.html`, `/obras/limoes.html`, `/blog/giz-pastel-oleoso/`) redirecionam para os novos. O `sitemap.xml` e o `robots.txt` são gerados a partir do conteúdo.
+
+## Estrutura do código
 
 | Pasta ou arquivo | O que tem |
 | --- | --- |
-| `index.html`, `portfolio.html`, `produtos.html`, `sobre.html`, `contato.html` | Páginas principais |
-| `obras/` | Uma página para cada obra |
-| `produtos/` | Uma página para cada planner digital |
-| `blog/` | Diário do Ateliê: página do blog e um endereço por artigo (`/blog/<slug>/`) |
-| `content/blog/` | **Texto dos artigos** do blog, um arquivo HTML por artigo |
-| `css/style.css` | Cores, fontes e layout |
-| `js/main.js` | Menu no celular, filtros do portfólio, galeria e formulários |
-| `images/` | Imagens otimizadas (WebP + JPG) usadas no site |
-| `scripts/site-data.mjs` | **Conteúdo do site**: obras, planners, textos, preços e links |
-| `scripts/blog-data.mjs` | **Dados do blog**: categorias e, para cada artigo, título, SEO, capa, fontes e data |
-| `scripts/build-site.mjs` | Gera as páginas HTML a partir do conteúdo |
-| `scripts/process-images.mjs` | Gera as imagens otimizadas a partir dos originais |
-| `scripts/export-site.mjs` + `vercel.json` | Publicação na Vercel: gera as páginas e copia só os arquivos do site para `public/` |
+| `src/payload.config.ts` | Configuração do painel: banco, imagens, idioma |
+| `src/collections/` | Obras, Produtos digitais, Artigos, Categorias, Imagens e Usuários |
+| `src/globals/` | Textos das páginas e configurações do site |
+| `src/blocks/` | Blocos que podem entrar no texto dos artigos e o editor de texto |
+| `src/app/(frontend)/` | Páginas do site e `style.css` (cores, fontes e layout) |
+| `src/app/(payload)/` | Painel `/admin` e API (gerado pelo Payload, não precisa editar) |
+| `src/components/`, `src/lib/` | Partes reutilizadas: cabeçalho, rodapé, cartões, imagens, SEO, dados estruturados |
+| `src/migrations/` | Alterações na estrutura do banco de dados |
+| `src/seed/` + `seed/` | Importação inicial: o conteúdo do site antigo e as imagens otimizadas que entraram no painel na primeira publicação |
+| `public/` | Ícones e `js/main.js` (menu no celular, filtros do portfólio, galeria e formulários) |
 
-## Como editar
+## Publicação
 
-1. Altere textos, preços ou links em `scripts/site-data.mjs`.
-2. Gere as páginas de novo:
+A cada envio para a branch `main`, a Vercel roda `npm run ci`:
 
-   ```bash
-   npm run build
-   ```
+1. `npm run migrate` aplica as alterações pendentes na estrutura do banco;
+2. `npm run seed` importa o conteúdo inicial, **só se o banco estiver vazio** (depois da primeira publicação, não faz nada);
+3. `npm run build` gera o site.
 
-3. Para ver o site no computador, abra o `index.html` no navegador ou rode `npm start`. (Os endereços do blog terminam em `/`; quando o site é aberto direto do arquivo, o `js/main.js` completa esses links com `index.html` para eles funcionarem.)
+Variáveis cadastradas na Vercel (Settings → Environment Variables): `DATABASE_URL`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID` e `S3_SECRET_ACCESS_KEY`. O `.env.example` explica cada uma. Senhas e chaves nunca vão para o GitHub.
 
-## Blog (Diário do Ateliê)
+As prévias da Vercel (envios para outras branches) usam o mesmo banco do site no ar. Se uma branch mudar a estrutura do conteúdo, a migração dela é aplicada nesse banco.
 
-Para publicar um artigo novo:
+## Rodar no computador
 
-1. Crie o texto em `content/blog/<slug>.html`, usando os artigos existentes como modelo: cada seção é um `<h2 id="...">`, e o sumário "Neste artigo" é montado sozinho a partir deles.
-2. Cadastre o artigo em `POSTS`, em `scripts/blog-data.mjs`: título, título de SEO (até ~60 caracteres), descrição (até ~160), categoria, capa, artigos relacionados, chamada final e fontes.
-3. No dia da publicação, preencha `published` com a data (`AAAA-MM-DD`). Se atualizar o texto depois, preencha `updated`.
-4. Rode `npm run build`.
-
-Recursos dentro do texto dos artigos:
-
-- `{{root}}` antes de links internos, por exemplo `<a href="{{root}}obras/limoes.html">`.
-- `{{fig src="art/limoes" caption="..."}}` para inserir uma imagem otimizada. Para obras e fotos de produtos, o texto alternativo é preenchido sozinho.
-- `<!-- REVISAR: ... -->` para anotações: elas não aparecem no site, e o `npm run build` lista todas no final.
-
-## Imagens
-
-Os arquivos originais em alta resolução (pastas `peças/` e `mockups/`) ficam só no computador e não vão para o GitHub, para proteger os arquivos de impressão. Para gerar as imagens do site a partir deles:
+Precisa do Node.js 20 ou mais novo.
 
 ```bash
 npm install
-npm run images
-npm run build
+cp .env.example .env    # preencha DATABASE_URL e PAYLOAD_SECRET
+npm run migrate
+npm run seed            # só preenche se o banco estiver vazio
+npm run dev
 ```
 
-## Pendências
+O site abre em http://localhost:3000 e o painel em http://localhost:3000/admin. Sem as variáveis `S3_*`, as imagens enviadas ficam na pasta `media/` do computador. Se o `DATABASE_URL` apontar para o Supabase, as alterações feitas no computador vão direto para o site no ar.
 
-- Trocar os links da Etsy pelos links do programa Share & Save (`scripts/site-data.mjs`).
-- Adicionar o link do Pinterest em `SITE.pinterest` para o ícone aparecer.
-- Conectar o formulário da newsletter a um serviço de e-mail (`js/main.js`).
-- Blog: revisar as anotações `REVISAR` dos artigos e preencher a data de publicação (`published`) em `scripts/blog-data.mjs`.
+### Mudando a estrutura do conteúdo
+
+Ao criar ou alterar campos em `src/collections/` ou `src/globals/`:
+
+```bash
+npm run generate:types                # atualiza os tipos em src/payload-types.ts
+npm run migrate:create nome-da-mudanca
+```
+
+Envie a migração nova (`src/migrations/`) junto com o código: a Vercel aplica na próxima publicação.
+
+## Imagens originais
+
+Os arquivos em alta resolução (pastas `peças/` e `mockups/`) ficam só no computador e não vão para o GitHub, para proteger os arquivos de impressão. Para o site, envie pelo painel uma versão para web (de 1600 a 2400 px no lado maior é suficiente).

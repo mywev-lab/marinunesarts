@@ -1,4 +1,11 @@
 node_modules/
+.next/
+.env
+.env*.local
+# imagens enviadas pelo painel quando o site roda no computador (no ar, ficam no Supabase)
+/media/
+*.tsbuildinfo
+next-env.d.ts
 
 # Originais em alta resolução: ficam só no computador
 peças/
@@ -13,6 +20,3 @@ _versao-anterior/
 .DS_Store
 Thumbs.db
 desktop.ini
-
-# Pasta gerada para publicação (Vercel)
-public/
