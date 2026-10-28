@@ -13,3 +13,6 @@ _versao-anterior/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Pasta gerada para publicação (Vercel)
+public/

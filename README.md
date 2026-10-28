@@ -2,7 +2,7 @@
 
 Site de Mariane Nunes: pinturas em aquarela e giz pastel oleoso, impressões e planners digitais.
 
-É um site estático (só HTML, CSS e JavaScript), então pode ser publicado em qualquer hospedagem de arquivos, como GitHub Pages, Netlify ou Vercel.
+É um site estático (só HTML, CSS e JavaScript), publicado pela Vercel: a cada envio para a branch `main`, a Vercel roda `node scripts/export-site.mjs` e publica a pasta `public/`.
 
 ## Estrutura
 
@@ -17,6 +17,7 @@ Site de Mariane Nunes: pinturas em aquarela e giz pastel oleoso, impressões e p
 | `scripts/site-data.mjs` | **Todo o conteúdo**: obras, planners, textos, preços e links |
 | `scripts/build-site.mjs` | Gera as páginas HTML a partir do conteúdo |
 | `scripts/process-images.mjs` | Gera as imagens otimizadas a partir dos originais |
+| `scripts/export-site.mjs` + `vercel.json` | Publicação na Vercel: gera as páginas e copia só os arquivos do site para `public/` |
 
 ## Como editar
 
