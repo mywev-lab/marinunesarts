@@ -1079,7 +1079,7 @@ ${post.sources.map((s) => `          <li><a href="${s.url}" target="_blank" rel=
         </ol>
       </section>`
     : "";
-  const main = `<div class="post-wrap">
+  const main = `<div class="post-wrap post-top">
   ${breadcrumb(root, crumbs)}
 </div>
 <article class="post">
