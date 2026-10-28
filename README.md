@@ -26,7 +26,7 @@ Algumas dicas:
 
 - **Ordem das obras e produtos:** o campo "Ordem" na lateral define a posição no site (números menores aparecem primeiro).
 - **Obras na página inicial e na loja:** na lateral da obra, marque "Mostrar em 'Do ateliê' na página inicial" e "Mostrar na página Produtos (obras à venda)".
-- **Imagens:** todo envio pede um texto alternativo (descrição da imagem para quem usa leitor de tela e para o Google). O painel gera sozinho as versões menores e mais leves que o site usa.
+- **Imagens:** envie arquivos de até 4 MB (o limite de envio da Vercel); uma foto de 1600 a 2400 px no lado maior costuma ficar bem abaixo disso. Todo envio pede um texto alternativo (descrição da imagem para quem usa leitor de tela e para o Google). O painel gera sozinho as versões menores e mais leves que o site usa.
 - **Endereço (slug):** é preenchido a partir do título. Se mudar o slug de uma página que já está no ar, o endereço antigo deixa de funcionar.
 
 ### Artigos do blog
@@ -71,9 +71,9 @@ A cada envio para a branch `main`, a Vercel roda `npm run ci`:
 2. `npm run seed` importa o conteúdo inicial, **só se o banco estiver vazio** (depois da primeira publicação, não faz nada);
 3. `npm run build` gera o site.
 
-Variáveis cadastradas na Vercel (Settings → Environment Variables): `DATABASE_URL`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY_ID` e `S3_SECRET_ACCESS_KEY`. O `.env.example` explica cada uma. Senhas e chaves nunca vão para o GitHub.
+As variáveis vêm da **integração Supabase da Vercel** (Settings → Environment Variables), sem nada para cadastrar à mão: `POSTGRES_URL` (banco), `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` (imagens) e `SUPABASE_JWT_SECRET` (usada para proteger o login do painel). Para trocar alguma delas sem mexer na integração, cadastre `DATABASE_URL` ou `PAYLOAD_SECRET`, que têm preferência. Senhas e chaves nunca vão para o GitHub.
 
-As prévias da Vercel (envios para outras branches) usam o mesmo banco do site no ar. Se uma branch mudar a estrutura do conteúdo, a migração dela é aplicada nesse banco.
+A integração cadastra as variáveis só para o ambiente **Production**: as prévias da Vercel (envios para outras branches) não têm acesso ao banco e a montagem delas falha. Para ter prévias, marque também **Preview** nessas variáveis; nesse caso, as prévias usam o mesmo banco do site no ar, e a migração de uma branch que mude a estrutura do conteúdo é aplicada nesse banco.
 
 ## Rodar no computador
 
@@ -87,7 +87,7 @@ npm run seed            # só preenche se o banco estiver vazio
 npm run dev
 ```
 
-O site abre em http://localhost:3000 e o painel em http://localhost:3000/admin. Sem as variáveis `S3_*`, as imagens enviadas ficam na pasta `media/` do computador. Se o `DATABASE_URL` apontar para o Supabase, as alterações feitas no computador vão direto para o site no ar.
+O site abre em http://localhost:3000 e o painel em http://localhost:3000/admin. Sem as variáveis `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`, as imagens enviadas ficam na pasta `media/` do computador. Se o `DATABASE_URL` apontar para o Supabase, as alterações feitas no computador vão direto para o site no ar.
 
 ### Mudando a estrutura do conteúdo
 

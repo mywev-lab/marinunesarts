@@ -9,7 +9,8 @@ export const Media: CollectionConfig = {
   labels: { singular: 'Imagem', plural: 'Imagens' },
   admin: {
     group: 'Configurações',
-    description: 'Todas as imagens do site. Ao enviar uma imagem, o painel cria sozinho as versões menores e mais leves.',
+    description:
+      'Todas as imagens do site. Envie arquivos de até 4 MB (uma foto de 1600 a 2400 px no lado maior é suficiente): o painel cria sozinho as versões menores e mais leves.',
     defaultColumns: ['filename', 'alt', 'updatedAt'],
   },
   access: { read: () => true },
