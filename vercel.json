@@ -2,5 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "npm run ci",
-  "regions": ["gru1"]
+  "regions": ["gru1"],
+  "crons": [{ "path": "/cron/manter-ativo", "schedule": "17 11 * * *" }]
 }

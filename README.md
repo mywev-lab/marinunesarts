@@ -77,6 +77,10 @@ As variáveis vêm da **integração Supabase da Vercel** (Settings → Environm
 
 A integração cadastra as variáveis só para o ambiente **Production**: as prévias da Vercel (envios para outras branches) não têm acesso ao banco e a montagem delas falha. Para ter prévias, marque também **Preview** nessas variáveis; nesse caso, as prévias usam o mesmo banco do site no ar, e a migração de uma branch que mude a estrutura do conteúdo é aplicada nesse banco.
 
+### Supabase sempre ativo
+
+No plano gratuito, o Supabase pausa o projeto depois de uma semana sem uso do banco, e as imagens do site param de carregar (aconteceu em novembro de 2026). Como as páginas ficam prontas em cache, as visitas não chegam ao banco. Por isso a Vercel chama `/cron/manter-ativo` uma vez por dia (`crons` no `vercel.json`), que faz uma consulta simples ao banco. As execuções aparecem em Vercel → Settings → Cron Jobs. Se o projeto pausar mesmo assim, reative em Supabase → Project → **Restore project**; no plano pago (Pro), o Supabase não pausa.
+
 ## Rodar no computador
 
 Precisa do Node.js 20 ou mais novo.
