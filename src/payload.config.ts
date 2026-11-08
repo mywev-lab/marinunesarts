@@ -58,7 +58,13 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
-    meta: { titleSuffix: ' | Mari Nunes Arts' },
+    meta: {
+      titleSuffix: ' | Efúgio Atelier',
+      icons: [{ rel: 'icon', type: 'image/png', url: '/images/icons/favicon-32.png' }],
+    },
+    components: {
+      graphics: { Logo: '/components/admin/Graphics#Logo', Icon: '/components/admin/Graphics#Icon' },
+    },
     dateFormat: 'dd/MM/yyyy HH:mm',
   },
   i18n: { supportedLanguages: { pt }, fallbackLanguage: 'pt' },

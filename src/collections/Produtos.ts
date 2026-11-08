@@ -5,35 +5,52 @@ import { revalidateAfterChange, revalidateAfterDelete } from '../hooks/revalidat
 
 export const Produtos: CollectionConfig = {
   slug: 'produtos',
-  labels: { singular: 'Produto digital', plural: 'Produtos digitais' },
+  labels: { singular: 'Produto', plural: 'Produtos' },
   admin: {
     useAsTitle: 'name',
     group: 'Portfólio e loja',
-    defaultColumns: ['name', 'kind', 'price', 'order'],
-    description: 'Planners e outros produtos digitais vendidos na Etsy. Cada um ganha uma página em /produtos/endereço.',
+    defaultColumns: ['name', 'type', 'kind', 'price', 'order'],
+    description:
+      'Planners digitais e prints das obras. Cada produto ganha uma página em /produtos/endereço. Sem preço, aparece "Valor sob consulta"; sem link da Etsy, o botão leva ao contato.',
   },
   defaultSort: 'order',
   access: { read: () => true },
   hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },
   fields: [
+    {
+      name: 'type',
+      label: 'Tipo de produto',
+      type: 'select',
+      required: true,
+      defaultValue: 'digital',
+      options: [
+        { label: 'Digital (download)', value: 'digital' },
+        { label: 'Print (impressão)', value: 'print' },
+      ],
+      admin: { position: 'sidebar', description: 'Prints aparecem na seção "Prints artísticos" da página Produtos.' },
+    },
     { name: 'name', label: 'Nome', type: 'text', required: true },
     {
       type: 'row',
       fields: [
-        { name: 'kind', label: 'Tipo', type: 'text', required: true, admin: { placeholder: 'Planner digital inspirado em Van Gogh' } },
+        { name: 'kind', label: 'Descrição curta', type: 'text', required: true, admin: { placeholder: 'Planner digital inspirado em Van Gogh' } },
         {
           name: 'category',
           label: 'Categoria',
           type: 'text',
           defaultValue: 'Planners',
-          admin: { width: '30%', description: 'Agrupa os produtos na página Produtos (ex.: Planners, Cadernos, Convites).' },
+          admin: {
+            width: '30%',
+            description: 'Agrupa os produtos digitais na página Produtos (ex.: Planners, Cadernos, Convites).',
+            condition: (data) => data?.type !== 'print',
+          },
         },
       ],
     },
     {
       type: 'row',
       fields: [
-        { name: 'price', label: 'Preço (como aparece)', type: 'text', required: true, admin: { placeholder: 'US$ 10' } },
+        { name: 'price', label: 'Preço (como aparece)', type: 'text', admin: { placeholder: 'US$ 10', description: 'Vazio: "Valor sob consulta".' } },
         { name: 'priceValue', label: 'Preço (número)', type: 'number', admin: { description: 'Para o Google. Ex.: 10' } },
         {
           name: 'currency',
@@ -47,7 +64,15 @@ export const Produtos: CollectionConfig = {
         },
       ],
     },
-    { name: 'etsy', label: 'Link da Etsy', type: 'text', required: true },
+    { name: 'etsy', label: 'Link da Etsy', type: 'text', admin: { description: 'Vazio: o botão leva ao formulário de contato.' } },
+    {
+      name: 'works',
+      label: 'Obras deste produto',
+      type: 'relationship',
+      relationTo: 'obras',
+      hasMany: true,
+      admin: { description: 'Para prints: as obras impressas. A página da obra ganha um link para o print.', condition: (data) => data?.type === 'print' },
+    },
     {
       name: 'images',
       label: 'Imagens',

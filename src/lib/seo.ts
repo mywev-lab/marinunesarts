@@ -11,8 +11,11 @@ export async function pageMetadata({
   type = 'website',
   article,
   noindex = false,
+  brand = false,
 }: {
   title: string
+  /** acrescenta " | Nome do site" ao título */
+  brand?: boolean
   description?: string | null
   path: string
   image?: MediaRef
@@ -21,6 +24,7 @@ export async function pageMetadata({
   noindex?: boolean
 }): Promise<Metadata> {
   const settings = await getSettings()
+  if (brand) title = `${title} | ${settings.siteName}`
   const media = asMedia(image) || asMedia(settings.ogImage)
   const imageUrl = media ? absoluteUrl(pick(media, 1200)?.url, settings.siteUrl) : undefined
   return {

@@ -106,7 +106,11 @@ export function SiteHeader({ settings, current, overlay = false }: { settings: C
       <header className={`site-header ${overlay ? 'site-header--overlay' : 'site-header--solid'}`}>
         <div className="header-inner">
           <a className="brand" href="/" aria-label={`${settings.siteName}, página inicial`}>
-            {settings.siteName}
+            <img className="brand-mark brand-mark--dark" src="/images/brand/efugio-ramo.webp" alt="" width={300} height={187} />
+            <img className="brand-mark brand-mark--light" src="/images/brand/efugio-ramo-claro.webp" alt="" width={300} height={187} />
+            <span className="brand-sub" aria-hidden="true">
+              Atelier
+            </span>
           </a>
           <nav className="main-nav" id="main-nav" aria-label="Navegação principal">
             <ul>
@@ -159,7 +163,9 @@ export function SiteFooter({ settings }: { settings: Configuracoes }) {
     <footer className="site-footer">
       <div className="footer-inner">
         <div className="footer-brand">
-          <p className="footer-name">{settings.siteName}</p>
+          <p className="footer-name">
+            <img src="/images/brand/efugio-atelier-logo-claro.webp" alt={`${settings.siteName}, por Mari Nunes`} width={560} height={466} loading="lazy" />
+          </p>
           {settings.footerText ? <p>{settings.footerText}</p> : null}
           {settings.city ? <p>{settings.city}</p> : null}
         </div>
@@ -312,6 +318,7 @@ export function WorkCard({ work, variant = 'portfolio' }: { work: Obra; variant?
 
 export function DigitalCard({ product }: { product: Produto }) {
   const cover = product.images?.[0]?.image
+  const isPrint = product.type === 'print'
   return (
     <article className="card">
       <a className="card-link" href={`/produtos/${product.slug}`}>
@@ -330,8 +337,8 @@ export function DigitalCard({ product }: { product: Produto }) {
             ) : null}
           </p>
           <p className="card-foot">
-            <span className="card-price">{product.price}</span>
-            <span className="card-tag">Download digital</span>
+            <span className="card-price">{product.price || 'Valor sob consulta'}</span>
+            <span className="card-tag">{isPrint ? 'Print' : 'Download digital'}</span>
           </p>
         </div>
       </a>

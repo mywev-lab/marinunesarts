@@ -12,7 +12,9 @@ export async function generateMetadata() {
 
 export default async function ProdutosPage() {
   const [settings, g, produtos, obras] = await Promise.all([getSettings(), getGlobal('pagina-produtos'), getProdutos(), getObras()])
-  const categories = [...new Set(produtos.map((p) => p.category || 'Produtos'))]
+  const digital = produtos.filter((p) => p.type !== 'print')
+  const prints = produtos.filter((p) => p.type === 'print')
+  const categories = [...new Set(digital.map((p) => p.category || 'Produtos'))]
   const forSale = obras.filter((o) => o.forSale)
   return (
     <Page settings={settings} current="produtos">
@@ -29,7 +31,7 @@ export default async function ProdutosPage() {
             <div className="container">
               <SectionHead id={id} title={`${cat} digitais`} lede={g.digitalLede} />
               <div className="grid grid--4">
-                {produtos
+                {digital
                   .filter((p) => (p.category || 'Produtos') === cat)
                   .map((p) => (
                     <DigitalCard key={p.id} product={p} />
@@ -39,6 +41,18 @@ export default async function ProdutosPage() {
           </section>
         )
       })}
+      {prints.length ? (
+        <section className="section section--tight" aria-labelledby="prints-title">
+          <div className="container">
+            <SectionHead id="prints-title" title={g.printsTitle || 'Prints artísticos'} lede={g.printsLede} />
+            <div className="grid grid--4">
+              {prints.map((p) => (
+                <DigitalCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
       {forSale.length ? (
         <section className="section section--tight" aria-labelledby="obras-title">
           <div className="container">

@@ -1,7 +1,7 @@
 {
   "name": "marinunesarts",
   "version": "2.0.0",
-  "description": "Site da Mari Nunes Arts com painel de conteúdo (Payload CMS)",
+  "description": "Site do Efúgio Atelier, de Mari Nunes, com painel de conteúdo (Payload CMS)",
   "private": true,
   "type": "module",
   "scripts": {

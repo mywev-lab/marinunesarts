@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { JsonLd, Page, Picture, SectionHead, WorkCard, Breadcrumb } from '@/components/ui'
-import { getObra, getObras, getPosts, getSettings } from '@/lib/data'
+import { getGlobal, getObra, getObras, getPosts, getProdutos, getSettings } from '@/lib/data'
 import { absoluteUrl, asMedia, pick } from '@/lib/media'
 import { authorRef, breadcrumbLd, pageMetadata } from '@/lib/seo'
 import { STATUS_LABEL, contactUrl, paragraphs } from '@/lib/text'
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props) {
   const w = await getObra(slug)
   if (!w) return {}
   const desc = `${w.title}, ${w.technique.toLowerCase()}${w.year ? `, ${w.year}` : ''}. ${paragraphs(w.description)[0] || ''}`.slice(0, 300)
-  return pageMetadata({ title: `${w.title} | Mari Nunes Arts`, description: desc, path: `/obras/${w.slug}`, image: w.image, type: 'article' })
+  return pageMetadata({ title: w.title, brand: true, description: desc, path: `/obras/${w.slug}`, image: w.image, type: 'article' })
 }
 
 /** Artigo do blog que explica a técnica da obra */
@@ -31,8 +31,9 @@ async function techniquePost(technique: string) {
 
 export default async function WorkPage({ params }: Props) {
   const { slug } = await params
-  const [settings, obras, w] = await Promise.all([getSettings(), getObras(), getObra(slug)])
+  const [settings, obras, w, produtos, loja] = await Promise.all([getSettings(), getObras(), getObra(slug), getProdutos(), getGlobal('pagina-produtos')])
   if (!w) notFound()
+  const prints = produtos.filter((p) => p.type === 'print' && (p.works || []).some((x) => (typeof x === 'object' ? x?.id : x) === w.id))
   const i = obras.findIndex((o) => o.id === w.id)
   const prev = obras[(i - 1 + obras.length) % obras.length]
   const next = obras[(i + 1) % obras.length]
@@ -57,6 +58,12 @@ export default async function WorkPage({ params }: Props) {
   if (w.status === 'disponivel') action = { href: contactUrl({ assunto: 'Comprar uma obra', obra: w.title }), label: 'Tenho interesse nesta obra' }
   if (w.status === 'colecao-particular' || w.status === 'vendida')
     action = { href: contactUrl({ assunto: 'Solicitar uma encomenda', obra: w.title }), label: 'Encomendar uma obra parecida' }
+  // Prints: todas as obras podem ser pedidas em print (texto em Páginas → Produtos); se houver um produto de print, leva até ele
+  const printAction = loja.printNote
+    ? prints[0]
+      ? { href: `/produtos/${prints[0].slug}`, label: 'Ver o print' }
+      : { href: contactUrl({ assunto: 'Comprar um print', obra: w.title }), label: 'Pedir um print' }
+    : null
 
   return (
     <Page settings={settings} current="portfolio">
@@ -87,12 +94,18 @@ export default async function WorkPage({ params }: Props) {
             <a className="btn btn-primary" href={action.href}>
               {action.label}
             </a>
+            {printAction ? (
+              <a className="btn btn-outline" href={printAction.href}>
+                {printAction.label}
+              </a>
+            ) : null}
             {w.etsy?.url ? (
               <a className="btn btn-outline" href={w.etsy.url} target="_blank" rel="noopener">
                 {w.etsy.label || 'Ver na Etsy'}
               </a>
             ) : null}
           </div>
+          {loja.printNote ? <p className="work-note">{loja.printNote}</p> : null}
           {w.instagram ? (
             <a className="text-link" href={w.instagram} target="_blank" rel="noopener">
               Ver a publicação no Instagram

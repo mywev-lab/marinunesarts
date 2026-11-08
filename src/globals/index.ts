@@ -28,7 +28,7 @@ export const Configuracoes: GlobalConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'siteName', label: 'Nome do site', type: 'text', required: true, defaultValue: 'Mari Nunes Arts' },
+        { name: 'siteName', label: 'Nome do site', type: 'text', required: true, defaultValue: 'Efúgio Atelier' },
         { name: 'authorName', label: 'Nome da artista', type: 'text', required: true, defaultValue: 'Mariane Nunes' },
       ],
     },
@@ -37,7 +37,7 @@ export const Configuracoes: GlobalConfig = {
       label: 'Endereço oficial do site',
       type: 'text',
       required: true,
-      defaultValue: 'https://www.marinunesarts.com',
+      defaultValue: 'https://marinunesarts.vercel.app',
       admin: { description: 'Usado nos links para o Google e as redes sociais.' },
     },
     {
@@ -279,6 +279,19 @@ export const PaginaProdutos: GlobalConfig = {
     },
     { name: 'worksTitle', label: 'Título da seção de obras', type: 'text' },
     {
+      type: 'row',
+      fields: [
+        { name: 'printsTitle', label: 'Título da seção de prints', type: 'text', defaultValue: 'Prints artísticos' },
+        { name: 'printsLede', label: 'Texto da seção de prints', type: 'textarea' },
+      ],
+    },
+    {
+      name: 'printNote',
+      label: 'Texto sobre prints na página de cada obra',
+      type: 'textarea',
+      admin: { description: 'Aparece com o botão "Pedir um print" em todas as obras. Vazio: as obras não mostram a opção de print.' },
+    },
+    {
       name: 'commission',
       label: 'Encomendas',
       type: 'group',
@@ -294,7 +307,7 @@ export const PaginaProdutos: GlobalConfig = {
       type: 'array',
       fields: [{ name: 'text', label: 'Passo', type: 'text', required: true }],
     },
-    { name: 'purchaseNote', label: 'Aviso abaixo do botão de compra', type: 'textarea' },
+    { name: 'purchaseNote', label: 'Aviso abaixo do botão de compra (produtos digitais)', type: 'textarea' },
     { name: 'digitalNote', label: 'Aviso sobre produto digital', type: 'textarea' },
   ],
 }

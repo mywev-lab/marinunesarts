@@ -103,6 +103,7 @@ for (const [i, p] of (DIGITAL as any[]).entries()) {
     collection: 'produtos',
     context: ctx,
     data: {
+      type: 'digital',
       name: p.name,
       slug: p.slug,
       kind: p.kind,

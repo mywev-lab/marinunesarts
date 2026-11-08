@@ -195,7 +195,7 @@ export interface Obra {
   createdAt: string;
 }
 /**
- * Todas as imagens do site. Ao enviar uma imagem, o painel cria sozinho as versões menores e mais leves.
+ * Todas as imagens do site. Envie arquivos de até 4 MB (uma foto de 1600 a 2400 px no lado maior é suficiente): o painel cria sozinho as versões menores e mais leves.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
@@ -256,26 +256,40 @@ export interface Media {
   };
 }
 /**
- * Planners e outros produtos digitais vendidos na Etsy. Cada um ganha uma página em /produtos/endereço.
+ * Planners digitais e prints das obras. Cada produto ganha uma página em /produtos/endereço. Sem preço, aparece "Valor sob consulta"; sem link da Etsy, o botão leva ao contato.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "produtos".
  */
 export interface Produto {
   id: number;
+  /**
+   * Prints aparecem na seção "Prints artísticos" da página Produtos.
+   */
+  type: 'digital' | 'print';
   name: string;
   kind: string;
   /**
-   * Agrupa os produtos na página Produtos (ex.: Planners, Cadernos, Convites).
+   * Agrupa os produtos digitais na página Produtos (ex.: Planners, Cadernos, Convites).
    */
   category?: string | null;
-  price: string;
+  /**
+   * Vazio: "Valor sob consulta".
+   */
+  price?: string | null;
   /**
    * Para o Google. Ex.: 10
    */
   priceValue?: number | null;
   currency?: ('USD' | 'BRL') | null;
-  etsy: string;
+  /**
+   * Vazio: o botão leva ao formulário de contato.
+   */
+  etsy?: string | null;
+  /**
+   * Para prints: as obras impressas. A página da obra ganha um link para o print.
+   */
+  works?: (number | Obra)[] | null;
   /**
    * A primeira imagem é a capa.
    */
@@ -582,6 +596,7 @@ export interface ObrasSelect<T extends boolean = true> {
  * via the `definition` "produtos_select".
  */
 export interface ProdutosSelect<T extends boolean = true> {
+  type?: T;
   name?: T;
   kind?: T;
   category?: T;
@@ -589,6 +604,7 @@ export interface ProdutosSelect<T extends boolean = true> {
   priceValue?: T;
   currency?: T;
   etsy?: T;
+  works?: T;
   images?:
     | T
     | {
@@ -988,6 +1004,12 @@ export interface PaginaProduto {
   digitalLede?: string | null;
   worksLede?: string | null;
   worksTitle?: string | null;
+  printsTitle?: string | null;
+  printsLede?: string | null;
+  /**
+   * Aparece com o botão "Pedir um print" em todas as obras. Vazio: as obras não mostram a opção de print.
+   */
+  printNote?: string | null;
   commission?: {
     title?: string | null;
     text?: string | null;
@@ -1270,6 +1292,9 @@ export interface PaginaProdutosSelect<T extends boolean = true> {
   digitalLede?: T;
   worksLede?: T;
   worksTitle?: T;
+  printsTitle?: T;
+  printsLede?: T;
+  printNote?: T;
   commission?:
     | T
     | {

@@ -7,7 +7,7 @@ import { pageMetadata } from '@/lib/seo'
 
 export async function generateMetadata() {
   const g = await getGlobal('privacidade')
-  return pageMetadata({ title: `${g.title} | Mari Nunes Arts`, description: 'Política de privacidade do site Mari Nunes Arts.', path: '/privacidade', noindex: true })
+  return pageMetadata({ title: g.title, brand: true, description: 'Política de privacidade do site.', path: '/privacidade', noindex: true })
 }
 
 export default async function PrivacidadePage() {

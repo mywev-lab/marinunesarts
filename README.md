@@ -1,6 +1,6 @@
-# Mari Nunes Arts
+# Efúgio Atelier
 
-Site de Mariane Nunes: pinturas em aquarela e giz pastel oleoso, impressões e planners digitais.
+Site do Efúgio Atelier, de Mariane Nunes (Mari Nunes): pinturas em aquarela e giz pastel oleoso, prints e planners digitais. Os arquivos do logo ficam em `public/images/brand/`.
 
 O site tem um **painel de conteúdo** (Payload CMS) em **`/admin`**: textos, obras, produtos, imagens e artigos do blog são editados por lá, sem mexer em código. Quando você salva, o site atualiza em poucos segundos.
 
@@ -17,7 +17,7 @@ Entre em **https://marinunesarts.vercel.app/admin** com seu e-mail e senha. O me
 
 | Grupo | O que tem |
 | --- | --- |
-| **Portfólio e loja** | **Obras** (cada pintura: imagem, técnica, ano, medidas, status, link da Etsy, fotos "na parede") e **Produtos digitais** (planners: preço, fotos, especificações, o que vem incluído) |
+| **Portfólio e loja** | **Obras** (cada pintura: imagem, técnica, ano, medidas, status, link da Etsy, fotos "na parede") e **Produtos**: planners digitais e prints (tipo na lateral, preço, fotos, especificações, o que vem incluído). Sem preço, aparece "Valor sob consulta"; sem link da Etsy, o botão leva ao contato |
 | **Blog** | **Artigos** do Diário do Ateliê e **Categorias do blog** |
 | **Páginas** | Textos de cada página: Página inicial, Sobre, Portfólio, Produtos, Blog, Contato e Política de privacidade |
 | **Configurações** | **Configurações do site** (e-mail, cidade, redes sociais, texto do rodapé, newsletter, imagem de compartilhamento), **Imagens** e **Usuários** |
@@ -27,6 +27,7 @@ Algumas dicas:
 - **Ordem das obras e produtos:** o campo "Ordem" na lateral define a posição no site (números menores aparecem primeiro).
 - **Obras na página inicial e na loja:** na lateral da obra, marque "Mostrar em 'Do ateliê' na página inicial" e "Mostrar na página Produtos (obras à venda)".
 - **Imagens:** envie arquivos de até 4 MB (o limite de envio da Vercel); uma foto de 1600 a 2400 px no lado maior costuma ficar bem abaixo disso. Todo envio pede um texto alternativo (descrição da imagem para quem usa leitor de tela e para o Google). O painel gera sozinho as versões menores e mais leves que o site usa.
+- **Prints:** o texto sobre prints em **Páginas → Página Produtos** aparece, com o botão "Pedir um print", na página de todas as obras. Uma obra ligada a um produto do tipo print leva direto à página desse print.
 - **Endereço (slug):** é preenchido a partir do título. Se mudar o slug de uma página que já está no ar, o endereço antigo deixa de funcionar.
 
 ### Artigos do blog
