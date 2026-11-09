@@ -6,14 +6,15 @@ O site tem um **painel de conteúdo** (Payload CMS) em **`/admin`**: textos, obr
 
 | Parte | Onde fica |
 | --- | --- |
-| Site e painel | Next.js + Payload CMS, publicado pela Vercel (região São Paulo) |
+| Site e painel | Next.js + Payload CMS, publicado pela Vercel (região São Paulo), no domínio **www.efugioatelier.com** (o endereço marinunesarts.vercel.app continua funcionando) |
+| Domínio e DNS | Cloudflare: registros A de `efugioatelier.com` e CNAME de `www` apontando para a Vercel, com o proxy desligado ("Somente DNS") |
 | Conteúdo (textos, obras, artigos) | Banco de dados Postgres no Supabase (projeto `marinunesarts-cms`) |
 | Imagens enviadas pelo painel | Supabase Storage, pasta (bucket) `media` |
 | Código | GitHub, `mywev-lab/marinunesarts` |
 
 ## Como editar pelo painel
 
-Entre em **https://marinunesarts.vercel.app/admin** com seu e-mail e senha. O menu da esquerda está organizado assim:
+Entre em **https://www.efugioatelier.com/admin** com seu e-mail e senha. O menu da esquerda está organizado assim:
 
 | Grupo | O que tem |
 | --- | --- |

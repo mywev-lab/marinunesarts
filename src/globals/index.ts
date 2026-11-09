@@ -37,7 +37,7 @@ export const Configuracoes: GlobalConfig = {
       label: 'Endereço oficial do site',
       type: 'text',
       required: true,
-      defaultValue: 'https://marinunesarts.vercel.app',
+      defaultValue: 'https://www.efugioatelier.com',
       admin: { description: 'Usado nos links para o Google e as redes sociais.' },
     },
     {
