@@ -108,6 +108,9 @@ h3, .h3 { font-size: 1.3rem; line-height: 1.25; }
 }
 @supports (backdrop-filter: blur(8px)) {
   .site-header--solid, .site-header--overlay.is-scrolled { background: rgba(245, 240, 230, .88); backdrop-filter: blur(10px); }
+  /* Com o menu do celular aberto, o desfoque sai: um elemento com backdrop-filter passa a ser a
+     referência do menu (position: fixed), que ficava preso à altura do cabeçalho e aparecia cortado */
+  .site-header.menu-open { background: rgba(245, 240, 230, .96); backdrop-filter: none; }
 }
 .site-header--overlay:not(.is-scrolled):not(.menu-open) { color: var(--ivory); }
 
