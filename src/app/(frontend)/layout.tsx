@@ -7,6 +7,9 @@ import './style.css'
 
 export const viewport: Viewport = { themeColor: '#F5F0E6' }
 
+/** Google Tag Manager do site (as tags, como o Google Analytics, são configuradas no próprio GTM) */
+const GTM_ID = 'GTM-5T5HFRXH'
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings()
   return {
@@ -30,8 +33,23 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
           href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Young+Serif&display=swap"
           rel="stylesheet"
         />
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`}
+        </Script>
       </head>
       <body>
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+            title="Google Tag Manager"
+          />
+        </noscript>
         {children}
         <Script src="/js/main.js" strategy="afterInteractive" />
       </body>
