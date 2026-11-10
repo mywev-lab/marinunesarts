@@ -4,6 +4,7 @@ import * as migration_20261108_210522_produtos_prints from './20261108_210522_pr
 import * as migration_20261108_220000_efugio_atelier from './20261108_220000_efugio_atelier';
 import * as migration_20261109_150000_dominio_efugio from './20261109_150000_dominio_efugio';
 import * as migration_20261110_200000_dominio_sem_www from './20261110_200000_dominio_sem_www';
+import * as migration_20261110_204856_aviso_cookies from './20261110_204856_aviso_cookies';
 
 export const migrations = [
   {
@@ -19,7 +20,7 @@ export const migrations = [
   {
     up: migration_20261108_210522_produtos_prints.up,
     down: migration_20261108_210522_produtos_prints.down,
-    name: '20261108_210522_produtos_prints'
+    name: '20261108_210522_produtos_prints',
   },
   {
     up: migration_20261108_220000_efugio_atelier.up,
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20261110_200000_dominio_sem_www.up,
     down: migration_20261110_200000_dominio_sem_www.down,
     name: '20261110_200000_dominio_sem_www',
+  },
+  {
+    up: migration_20261110_204856_aviso_cookies.up,
+    down: migration_20261110_204856_aviso_cookies.down,
+    name: '20261110_204856_aviso_cookies'
   },
 ];

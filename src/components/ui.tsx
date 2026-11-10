@@ -201,9 +201,41 @@ export function SiteFooter({ settings }: { settings: Configuracoes }) {
         <p>
           © <span data-year>{new Date().getFullYear()}</span> {settings.authorName}. Todos os direitos reservados.
         </p>
-        <a href="/privacidade">Política de privacidade</a>
+        <div className="footer-legal">
+          <a href="/privacidade">Política de privacidade</a>
+          <button type="button" className="footer-link-btn" data-cookie-prefs>
+            Preferências de cookies
+          </button>
+        </div>
       </div>
     </footer>
+  )
+}
+
+/* ---------------- aviso de cookies (LGPD) ---------------- */
+export const COOKIE_DEFAULTS = {
+  text: 'Usamos cookies para entender como o site é visitado e melhorar sua experiência. Você pode aceitar ou recusar: os cookies necessários para o site funcionar continuam ativos.',
+  acceptLabel: 'Aceitar cookies',
+  rejectLabel: 'Recusar',
+}
+
+/** Fica escondido; o /js/main.js mostra na primeira visita e guarda a escolha */
+export function CookieBanner({ settings }: { settings: Configuracoes }) {
+  const c = settings.cookies || {}
+  return (
+    <section className="cookie-banner" id="cookie-banner" aria-label="Aviso de cookies" hidden>
+      <p>
+        {c.text || COOKIE_DEFAULTS.text} <a href="/privacidade">Política de privacidade</a>
+      </p>
+      <div className="cookie-actions">
+        <button type="button" className="btn btn-primary" data-cookie-choice="aceito">
+          {c.acceptLabel || COOKIE_DEFAULTS.acceptLabel}
+        </button>
+        <button type="button" className="btn btn-outline" data-cookie-choice="recusado">
+          {c.rejectLabel || COOKIE_DEFAULTS.rejectLabel}
+        </button>
+      </div>
+    </section>
   )
 }
 

@@ -34,6 +34,35 @@
     window.matchMedia("(min-width: 901px)").addEventListener("change", (e) => e.matches && setMenu(false));
   }
 
+  /* ---------- Aviso de cookies (LGPD) e modo de consentimento do Google ---------- */
+  const COOKIE_KEY = "efugio-cookies";
+  const cookieBanner = document.getElementById("cookie-banner");
+  const readChoice = () => { try { return localStorage.getItem(COOKIE_KEY); } catch (e) { return null; } };
+  function setConsent(choice) {
+    try { localStorage.setItem(COOKIE_KEY, choice); } catch (e) {}
+    const value = choice === "aceito" ? "granted" : "denied";
+    window.dataLayer = window.dataLayer || [];
+    if (typeof window.gtag === "function") {
+      window.gtag("consent", "update", { ad_storage: value, ad_user_data: value, ad_personalization: value, analytics_storage: value });
+    }
+    window.dataLayer.push({ event: "consentimento_cookies", consentimento: choice });
+    if (cookieBanner) cookieBanner.hidden = true;
+  }
+  if (cookieBanner) {
+    if (!readChoice()) cookieBanner.hidden = false;
+    cookieBanner.querySelectorAll("[data-cookie-choice]").forEach((b) =>
+      b.addEventListener("click", () => setConsent(b.getAttribute("data-cookie-choice")))
+    );
+  }
+  document.querySelectorAll("[data-cookie-prefs]").forEach((b) =>
+    b.addEventListener("click", () => {
+      if (!cookieBanner) return;
+      cookieBanner.hidden = false;
+      const first = cookieBanner.querySelector("[data-cookie-choice]");
+      if (first) first.focus();
+    })
+  );
+
   /* ---------- Filtros do portfólio ---------- */
   const filterBtns = document.querySelectorAll(".filter-btn");
   const galleryCards = document.querySelectorAll("#gallery .card");

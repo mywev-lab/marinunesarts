@@ -79,6 +79,25 @@ export const Configuracoes: GlobalConfig = {
         { name: 'buttonLabel', label: 'Texto do botão', type: 'text', defaultValue: 'Quero receber' },
       ],
     },
+    {
+      name: 'cookies',
+      label: 'Aviso de cookies',
+      type: 'group',
+      admin: {
+        description:
+          'Aparece na primeira visita. Enquanto a pessoa não aceita, as ferramentas do Google Tag Manager (como o Google Analytics) ficam sem cookies. Vazio: usa o texto padrão.',
+      },
+      fields: [
+        { name: 'text', label: 'Texto', type: 'textarea' },
+        {
+          type: 'row',
+          fields: [
+            { name: 'acceptLabel', label: 'Botão de aceitar', type: 'text' },
+            { name: 'rejectLabel', label: 'Botão de recusar', type: 'text' },
+          ],
+        },
+      ],
+    },
     { name: 'ogImage', label: 'Imagem padrão para compartilhamento', type: 'upload', relationTo: 'media' },
   ],
 }

@@ -542,6 +542,26 @@ h3, .h3 { font-size: 1.3rem; line-height: 1.25; }
   font-size: .85rem; opacity: .7;
 }
 .footer-bottom a { text-decoration: none; }
+.footer-legal { display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; }
+.footer-link-btn { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+.footer-link-btn:hover { text-decoration: underline; }
+
+/* Aviso de cookies: cartão discreto no canto, sem bloquear a página */
+.cookie-banner {
+  position: fixed; z-index: 90; left: var(--gutter); right: var(--gutter); bottom: var(--gutter);
+  max-width: 34rem; padding: 1.25rem 1.4rem;
+  background: var(--paper); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 6px;
+  box-shadow: 0 12px 40px rgba(43, 38, 31, .14);
+}
+.cookie-banner[hidden] { display: none; }
+.cookie-banner p { font-size: .92rem; line-height: 1.55; margin: 0 0 1rem; }
+.cookie-banner p a { color: var(--olive-deep); text-underline-offset: 2px; }
+.cookie-actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+.cookie-actions .btn { padding-block: .65rem; }
+@media (max-width: 520px) { .cookie-actions .btn { flex: 1 1 auto; justify-content: center; } }
+/* no computador, no canto direito: não cobre os botões do topo da página inicial */
+@media (min-width: 760px) { .cookie-banner { left: auto; } }
 .footer-bottom a:hover { text-decoration: underline; }
 @media (min-width: 760px) { .footer-inner { grid-template-columns: 1.5fr 1fr 1fr; } }
 

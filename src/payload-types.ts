@@ -1133,6 +1133,14 @@ export interface Configuracoe {
     text?: string | null;
     buttonLabel?: string | null;
   };
+  /**
+   * Aparece na primeira visita. Enquanto a pessoa não aceita, as ferramentas do Google Tag Manager (como o Google Analytics) ficam sem cookies. Vazio: usa o texto padrão.
+   */
+  cookies?: {
+    text?: string | null;
+    acceptLabel?: string | null;
+    rejectLabel?: string | null;
+  };
   ogImage?: (number | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1397,6 +1405,13 @@ export interface ConfiguracoesSelect<T extends boolean = true> {
         title?: T;
         text?: T;
         buttonLabel?: T;
+      };
+  cookies?:
+    | T
+    | {
+        text?: T;
+        acceptLabel?: T;
+        rejectLabel?: T;
       };
   ogImage?: T;
   updatedAt?: T;
