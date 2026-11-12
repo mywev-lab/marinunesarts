@@ -7,6 +7,7 @@ import * as migration_20261110_200000_dominio_sem_www from './20261110_200000_do
 import * as migration_20261110_204856_aviso_cookies from './20261110_204856_aviso_cookies';
 import * as migration_20261112_152441_idiomas_pt_en from './20261112_152441_idiomas_pt_en';
 import * as migration_20261112_160000_conteudo_en from './20261112_160000_conteudo_en';
+import * as migration_20261112_190000_prints_de_todas_as_obras from './20261112_190000_prints_de_todas_as_obras';
 
 export const migrations = [
   {
@@ -53,5 +54,10 @@ export const migrations = [
     up: migration_20261112_160000_conteudo_en.up,
     down: migration_20261112_160000_conteudo_en.down,
     name: '20261112_160000_conteudo_en',
+  },
+  {
+    up: migration_20261112_190000_prints_de_todas_as_obras.up,
+    down: migration_20261112_190000_prints_de_todas_as_obras.down,
+    name: '20261112_190000_prints_de_todas_as_obras',
   },
 ];

@@ -70,7 +70,8 @@ export async function ContatoView({ locale }: { locale: Locale }) {
                 ))}
               </optgroup>
               <optgroup label={f.products}>
-                {produtos.map((p) => (
+                {/* prints com o mesmo nome de uma obra já aparecem em "Obras" */}
+                {produtos.filter((p) => !obras.some((w) => w.title === p.name)).map((p) => (
                   <option key={p.id} value={p.name}>
                     {p.name}
                   </option>

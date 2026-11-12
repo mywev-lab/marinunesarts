@@ -407,11 +407,19 @@ export function DigitalCard({ product, locale }: { product: Produto; locale: Loc
   const t = dict(locale)
   const cover = product.images?.[0]?.image
   const isPrint = product.type === 'print'
+  // Print cuja capa é a própria pintura: aparece com passe-partout, como nos cartões de obra (sem cortar a imagem)
+  const coverId = typeof cover === 'object' && cover ? cover.id : cover
+  const artCover = isPrint && (product.works || []).some((w) => typeof w === 'object' && w && (typeof w.image === 'object' ? w.image?.id : w.image) === coverId)
   return (
     <article className="card">
       <a className="card-link" href={localizePath(`/produtos/${product.slug}`, locale)}>
-        <div className="card-mat card-mat--product">
-          <Picture media={cover} maxFallback={800} sizes="(max-width: 600px) 92vw, (max-width: 1000px) 46vw, 24vw" />
+        <div className={artCover ? 'card-mat' : 'card-mat card-mat--product'}>
+          <Picture
+            media={cover}
+            maxFallback={800}
+            maxSrc={artCover ? 800 : Infinity}
+            sizes={artCover ? '(max-width: 600px) 46vw, (max-width: 1000px) 30vw, 22vw' : '(max-width: 600px) 92vw, (max-width: 1000px) 46vw, 24vw'}
+          />
         </div>
         <div className="card-body">
           <h3 className="card-title">{product.name}</h3>

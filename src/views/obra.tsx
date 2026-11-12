@@ -61,15 +61,19 @@ export async function ObraView({ locale, slug }: { locale: Locale; slug: string 
   const image = asMedia(w.image)
   const contact = (assunto: string) => contactUrl({ assunto, obra: w.title }, locale)
 
-  let action = { href: contact(t.subjects.buyWork), label: t.askAboutWork }
-  if (w.status === 'disponivel') action = { href: contact(t.subjects.buyWork), label: t.interestedInWork }
-  if (w.status === 'colecao-particular' || w.status === 'vendida') action = { href: contact(t.subjects.commission), label: t.commissionSimilar }
-  // Prints: todas as obras podem ser pedidas em print (texto em Páginas → Produtos); se houver um produto de print, leva até ele
+  // Prints: todas as obras podem ser pedidas em print (texto em Páginas → Produtos); se houver um produto de print,
+  // leva até ele (de preferência o print só desta obra, e não um conjunto)
+  const print = prints.find((p) => (p.works || []).length === 1) || prints[0]
   const printAction = loja.printNote
-    ? prints[0]
-      ? { href: L(`/produtos/${prints[0].slug}`), label: t.seePrint }
+    ? print
+      ? { href: L(`/produtos/${print.slug}`), label: t.seePrint }
       : { href: contact(t.subjects.buyPrint), label: t.requestPrint }
     : null
+
+  // Original: com print em destaque, o botão deixa claro que a pergunta é sobre a obra original
+  let action = { href: contact(t.subjects.buyWork), label: printAction ? t.askAboutOriginal : t.askAboutWork }
+  if (w.status === 'disponivel') action = { href: contact(t.subjects.buyWork), label: printAction ? t.askAboutOriginal : t.interestedInWork }
+  if (w.status === 'colecao-particular' || w.status === 'vendida') action = { href: contact(t.subjects.commission), label: t.commissionSimilar }
 
   return (
     <Page settings={settings} locale={locale} path={path} current="portfolio">
@@ -97,14 +101,15 @@ export async function ObraView({ locale, slug }: { locale: Locale; slug: string 
           </div>
           {w.etsy?.note ? <p className="work-note">{w.etsy.note}</p> : null}
           <div className="work-actions">
-            <a className="btn btn-primary" href={action.href}>
-              {action.label}
-            </a>
+            {/* o print vem primeiro (destaque); o original continua sob consulta */}
             {printAction ? (
-              <a className="btn btn-outline" href={printAction.href}>
+              <a className="btn btn-primary" href={printAction.href}>
                 {printAction.label}
               </a>
             ) : null}
+            <a className={`btn ${printAction ? 'btn-outline' : 'btn-primary'}`} href={action.href}>
+              {action.label}
+            </a>
             {w.etsy?.url ? (
               <a className="btn btn-outline" href={w.etsy.url} target="_blank" rel="noopener">
                 {w.etsy.label || t.viewOnEtsy}
