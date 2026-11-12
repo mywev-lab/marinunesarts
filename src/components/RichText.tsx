@@ -1,6 +1,7 @@
 import { RichText as LexicalRichText, type JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
 import React from 'react'
 
+import { dict, localizePath, type Locale } from '@/lib/i18n'
 import { slugify } from '@/lib/text'
 import { nodeText, type RichTextValue } from '@/lib/lexical'
 import { Picture } from './ui'
@@ -13,8 +14,20 @@ const FIGURE_SIZES: Record<Kind, string> = {
   product: '(max-width: 760px) 92vw, 560px',
 }
 
+/** Link do texto: endereços do site vão para a página no idioma atual (/obras/x → /en/works/x) */
+const linkConverter =
+  (locale: Locale) =>
+  ({ node, nodesToJSX }: any) => {
+    const { url, newTab } = node.fields || {}
+    return (
+      <a href={url ? localizePath(url, locale) : '#'} {...(newTab ? { target: '_blank', rel: 'noopener' } : {})}>
+        {nodesToJSX({ nodes: node.children })}
+      </a>
+    )
+  }
+
 /** Texto curto (legendas): sem parágrafos em volta */
-export function InlineRichText({ data }: { data: RichTextValue }) {
+export function InlineRichText({ data, locale = 'pt' }: { data: RichTextValue; locale?: Locale }) {
   if (!data?.root?.children?.length) return null
   return (
     <LexicalRichText
@@ -23,6 +36,7 @@ export function InlineRichText({ data }: { data: RichTextValue }) {
       converters={({ defaultConverters }) => ({
         ...defaultConverters,
         paragraph: ({ node, nodesToJSX }) => <>{nodesToJSX({ nodes: (node as any).children })}</>,
+        link: linkConverter(locale),
       })}
     />
   )
@@ -35,6 +49,7 @@ export function Figure({
   cls = 'post-figure',
   sizes,
   eager = false,
+  locale = 'pt',
 }: {
   image: any
   caption?: RichTextValue
@@ -42,6 +57,7 @@ export function Figure({
   cls?: string
   sizes?: string
   eager?: boolean
+  locale?: Locale
 }) {
   const k = (kind || 'art') as Kind
   return (
@@ -51,40 +67,39 @@ export function Figure({
       </div>
       {caption?.root?.children?.length ? (
         <figcaption>
-          <InlineRichText data={caption} />
+          <InlineRichText data={caption} locale={locale} />
         </figcaption>
       ) : null}
     </figure>
   )
 }
 
-const converters: JSXConvertersFunction<any> = ({ defaultConverters }) =>
+const converters =
+  (locale: Locale): JSXConvertersFunction<any> =>
+  ({ defaultConverters }) =>
   ({
   ...defaultConverters,
   heading: ({ node, nodesToJSX }: any) => {
     const Tag = (['h2', 'h3', 'h4'].includes(node.tag) ? node.tag : 'h2') as 'h2'
     return <Tag id={slugify(nodeText(node))}>{nodesToJSX({ nodes: node.children })}</Tag>
   },
-  link: ({ node, nodesToJSX }: any) => {
-    const { url, newTab } = node.fields || {}
-    return (
-      <a href={url || '#'} {...(newTab ? { target: '_blank', rel: 'noopener' } : {})}>
-        {nodesToJSX({ nodes: node.children })}
-      </a>
-    )
-  },
+  link: linkConverter(locale),
   blocks: {
     callout: ({ node }: any) => (
       <div className="callout">
-        <p className="callout-title">{node.fields.title || 'Em resumo'}</p>
-        <LexicalRichText data={node.fields.body} disableContainer />
+        <p className="callout-title">{node.fields.title || dict(locale).inShort}</p>
+        <LexicalRichText
+          data={node.fields.body}
+          disableContainer
+          converters={({ defaultConverters: d }) => ({ ...d, link: linkConverter(locale) })}
+        />
       </div>
     ),
-    figura: ({ node }: any) => <Figure image={node.fields.image} caption={node.fields.caption} kind={node.fields.kind} />,
+    figura: ({ node }: any) => <Figure image={node.fields.image} caption={node.fields.caption} kind={node.fields.kind} locale={locale} />,
     linhaDeFiguras: ({ node }: any) => (
       <div className="fig-row">
         {(node.fields.figuras || []).map((f: any, i: number) => (
-          <Figure key={f.id || i} image={f.image} caption={f.caption} kind="art" sizes="(max-width: 760px) 80vw, 260px" />
+          <Figure key={f.id || i} image={f.image} caption={f.caption} kind="art" sizes="(max-width: 760px) 80vw, 260px" locale={locale} />
         ))}
       </div>
     ),
@@ -98,7 +113,7 @@ const converters: JSXConvertersFunction<any> = ({ defaultConverters }) =>
               <tr>
                 {header.map((h: any, i: number) => (
                   <th key={i} scope="col">
-                    {h.text || <span className="visually-hidden">Item</span>}
+                    {h.text || <span className="visually-hidden">{dict(locale).tableItem}</span>}
                   </th>
                 ))}
               </tr>
@@ -126,7 +141,7 @@ const converters: JSXConvertersFunction<any> = ({ defaultConverters }) =>
 }) as any
 
 /** Texto completo (artigos e páginas) */
-export function RichText({ data }: { data: RichTextValue }) {
+export function RichText({ data, locale = 'pt' }: { data: RichTextValue; locale?: Locale }) {
   if (!data) return null
-  return <LexicalRichText data={data as any} converters={converters} disableContainer />
+  return <LexicalRichText data={data as any} converters={converters(locale)} disableContainer />
 }

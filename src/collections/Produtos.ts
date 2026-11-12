@@ -29,15 +29,16 @@ export const Produtos: CollectionConfig = {
       ],
       admin: { position: 'sidebar', description: 'Prints aparecem na seção "Prints artísticos" da página Produtos.' },
     },
-    { name: 'name', label: 'Nome', type: 'text', required: true },
+    { name: 'name', label: 'Nome', type: 'text', localized: true, required: true },
     {
       type: 'row',
       fields: [
-        { name: 'kind', label: 'Descrição curta', type: 'text', required: true, admin: { placeholder: 'Planner digital inspirado em Van Gogh' } },
+        { name: 'kind', label: 'Descrição curta', type: 'text', localized: true, required: true, admin: { placeholder: 'Planner digital inspirado em Van Gogh' } },
         {
           name: 'category',
           label: 'Categoria',
           type: 'text',
+          localized: true,
           defaultValue: 'Planners',
           admin: {
             width: '30%',
@@ -50,7 +51,7 @@ export const Produtos: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'price', label: 'Preço (como aparece)', type: 'text', admin: { placeholder: 'US$ 10', description: 'Vazio: "Valor sob consulta".' } },
+        { name: 'price', label: 'Preço (como aparece)', type: 'text', localized: true, admin: { placeholder: 'US$ 10', description: 'Vazio: "Valor sob consulta".' } },
         { name: 'priceValue', label: 'Preço (número)', type: 'number', admin: { description: 'Para o Google. Ex.: 10' } },
         {
           name: 'currency',
@@ -81,8 +82,8 @@ export const Produtos: CollectionConfig = {
       admin: { description: 'A primeira imagem é a capa.' },
       fields: [{ name: 'image', label: 'Imagem', type: 'upload', relationTo: 'media', required: true }],
     },
-    { name: 'summary', label: 'Resumo', type: 'textarea', required: true },
-    { name: 'cardMeta', label: 'Linha curta do cartão', type: 'text', admin: { placeholder: '71 páginas, sem datas' } },
+    { name: 'summary', label: 'Resumo', type: 'textarea', localized: true, required: true },
+    { name: 'cardMeta', label: 'Linha curta do cartão', type: 'text', localized: true, admin: { placeholder: '71 páginas, sem datas' } },
     {
       name: 'specs',
       label: 'Ficha técnica',
@@ -91,8 +92,8 @@ export const Produtos: CollectionConfig = {
         {
           type: 'row',
           fields: [
-            { name: 'label', label: 'Item', type: 'text', required: true },
-            { name: 'value', label: 'Valor', type: 'text', required: true },
+            { name: 'label', label: 'Item', type: 'text', localized: true, required: true },
+            { name: 'value', label: 'Valor', type: 'text', localized: true, required: true },
           ],
         },
       ],
@@ -101,7 +102,7 @@ export const Produtos: CollectionConfig = {
       name: 'includes',
       label: 'O que vem no produto',
       type: 'array',
-      fields: [{ name: 'text', label: 'Item', type: 'text', required: true }],
+      fields: [{ name: 'text', label: 'Item', type: 'text', localized: true, required: true }],
     },
     slugField('name'),
     { name: 'order', label: 'Ordem', type: 'number', defaultValue: 100, admin: { position: 'sidebar' } },

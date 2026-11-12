@@ -5,6 +5,8 @@ import * as migration_20261108_220000_efugio_atelier from './20261108_220000_efu
 import * as migration_20261109_150000_dominio_efugio from './20261109_150000_dominio_efugio';
 import * as migration_20261110_200000_dominio_sem_www from './20261110_200000_dominio_sem_www';
 import * as migration_20261110_204856_aviso_cookies from './20261110_204856_aviso_cookies';
+import * as migration_20261112_152441_idiomas_pt_en from './20261112_152441_idiomas_pt_en';
+import * as migration_20261112_160000_conteudo_en from './20261112_160000_conteudo_en';
 
 export const migrations = [
   {
@@ -40,6 +42,16 @@ export const migrations = [
   {
     up: migration_20261110_204856_aviso_cookies.up,
     down: migration_20261110_204856_aviso_cookies.down,
-    name: '20261110_204856_aviso_cookies'
+    name: '20261110_204856_aviso_cookies',
+  },
+  {
+    up: migration_20261112_152441_idiomas_pt_en.up,
+    down: migration_20261112_152441_idiomas_pt_en.down,
+    name: '20261112_152441_idiomas_pt_en',
+  },
+  {
+    up: migration_20261112_160000_conteudo_en.up,
+    down: migration_20261112_160000_conteudo_en.down,
+    name: '20261112_160000_conteudo_en',
   },
 ];

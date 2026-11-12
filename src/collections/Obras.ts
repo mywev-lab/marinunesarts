@@ -31,7 +31,7 @@ export const Obras: CollectionConfig = {
   access: { read: () => true },
   hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },
   fields: [
-    { name: 'title', label: 'Título', type: 'text', required: true },
+    { name: 'title', label: 'Título', type: 'text', localized: true, required: true },
     {
       name: 'image',
       label: 'Imagem da obra',
@@ -43,15 +43,15 @@ export const Obras: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'technique', label: 'Técnica', type: 'text', required: true, admin: { placeholder: 'Giz pastel oleoso sobre papel' } },
+        { name: 'technique', label: 'Técnica', type: 'text', localized: true, required: true, admin: { placeholder: 'Giz pastel oleoso sobre papel' } },
         { name: 'year', label: 'Ano', type: 'text', admin: { width: '20%' } },
       ],
     },
     {
       type: 'row',
       fields: [
-        { name: 'dimensions', label: 'Dimensões', type: 'text', admin: { placeholder: '24 × 32 cm' } },
-        { name: 'format', label: 'Formato', type: 'text', admin: { placeholder: 'Original ou Impressão artística' } },
+        { name: 'dimensions', label: 'Dimensões', type: 'text', localized: true, admin: { placeholder: '24 × 32 cm' } },
+        { name: 'format', label: 'Formato', type: 'text', localized: true, admin: { placeholder: 'Original ou Impressão artística' } },
         { name: 'status', label: 'Situação', type: 'select', options: WORK_STATUS, admin: { description: 'Deixe vazio para mostrar "Consulte a disponibilidade".' } },
       ],
     },
@@ -66,6 +66,7 @@ export const Obras: CollectionConfig = {
       name: 'description',
       label: 'Descrição',
       type: 'textarea',
+      localized: true,
       required: true,
       admin: { description: 'Deixe uma linha em branco para separar parágrafos.' },
     },
@@ -75,8 +76,8 @@ export const Obras: CollectionConfig = {
       type: 'group',
       fields: [
         { name: 'url', label: 'Link', type: 'text' },
-        { name: 'label', label: 'Texto do botão', type: 'text' },
-        { name: 'note', label: 'Observação', type: 'text' },
+        { name: 'label', label: 'Texto do botão', type: 'text', localized: true },
+        { name: 'note', label: 'Observação', type: 'text', localized: true },
       ],
     },
     { name: 'instagram', label: 'Link da publicação no Instagram', type: 'text' },

@@ -19,7 +19,8 @@
     mainNav.classList.toggle("is-open", open);
     header && header.classList.toggle("menu-open", open);
     navToggle.setAttribute("aria-expanded", String(open));
-    navToggle.setAttribute("aria-label", open ? "Fechar menu" : "Abrir menu");
+    // textos do botão no idioma da página (data-label-open / data-label-close)
+    navToggle.setAttribute("aria-label", open ? navToggle.dataset.labelClose || "Fechar menu" : navToggle.dataset.labelOpen || "Abrir menu");
     document.body.style.overflow = open ? "hidden" : "";
   }
   if (navToggle && mainNav) {
@@ -118,11 +119,14 @@
     setSelect("obra", params.get("obra"));
 
     const formNote = document.getElementById("form-note");
+    // textos no idioma da página (atributos data-* do formulário)
+    let labels = { name: "Nome", email: "E-mail", subject: "Assunto", work: "Obra ou produto", message: "Mensagem" };
+    try { labels = Object.assign(labels, JSON.parse(contactForm.dataset.labels || "{}")); } catch (e) {}
     contactForm.addEventListener("submit", (e) => {
       e.preventDefault();
       if (!contactForm.checkValidity()) {
         contactForm.reportValidity();
-        formNote.textContent = "Preencha nome, e-mail, assunto e mensagem para enviar.";
+        formNote.textContent = contactForm.dataset.missing || "Preencha nome, e-mail, assunto e mensagem para enviar.";
         formNote.classList.add("is-error");
         return;
       }
@@ -130,10 +134,10 @@
       const obra = data.get("obra");
       const subject = encodeURIComponent(`[Site] ${data.get("assunto")}${obra ? " — " + obra : ""}`);
       const body = encodeURIComponent(
-        `Nome: ${data.get("nome")}\nE-mail: ${data.get("email")}\nAssunto: ${data.get("assunto")}\nObra ou produto: ${obra || "—"}\n\nMensagem:\n${data.get("mensagem")}`
+        `${labels.name}: ${data.get("nome")}\n${labels.email}: ${data.get("email")}\n${labels.subject}: ${data.get("assunto")}\n${labels.work}: ${obra || "—"}\n\n${labels.message}:\n${data.get("mensagem")}`
       );
       window.location.href = `mailto:${contactForm.dataset.email || CONTACT_EMAIL}?subject=${subject}&body=${body}`;
-      formNote.textContent = "Abrindo o seu aplicativo de e-mail para concluir o envio.";
+      formNote.textContent = contactForm.dataset.opening || "Abrindo o seu aplicativo de e-mail para concluir o envio.";
       formNote.classList.remove("is-error");
     });
   }
@@ -144,7 +148,7 @@
     newsletterForm.addEventListener("submit", (e) => {
       e.preventDefault();
       // TODO: conectar a um serviço de e-mail (Mailchimp, Brevo, ConvertKit...)
-      document.getElementById("newsletter-note").textContent = "Inscrição recebida. Obrigada!";
+      document.getElementById("newsletter-note").textContent = newsletterForm.dataset.thanks || "Inscrição recebida. Obrigada!";
       newsletterForm.reset();
     });
   }

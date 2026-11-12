@@ -11,8 +11,8 @@ export const Categorias: CollectionConfig = {
   access: { read: () => true },
   hooks: { afterChange: [revalidateAfterChange], afterDelete: [revalidateAfterDelete] },
   fields: [
-    { name: 'name', label: 'Nome', type: 'text', required: true },
-    { name: 'description', label: 'Descrição', type: 'textarea' },
+    { name: 'name', label: 'Nome', type: 'text', localized: true, required: true },
+    { name: 'description', label: 'Descrição', type: 'textarea', localized: true },
     slugField('name'),
     { name: 'order', label: 'Ordem', type: 'number', defaultValue: 100, admin: { position: 'sidebar' } },
   ],

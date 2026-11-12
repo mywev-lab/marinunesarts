@@ -94,7 +94,7 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('pt' | 'en') | ('pt' | 'en')[];
   globals: {
     inicio: Inicio;
     sobre: Sobre;
@@ -115,7 +115,7 @@ export interface Config {
     'pagina-blog': PaginaBlogSelect<false> | PaginaBlogSelect<true>;
     configuracoes: ConfiguracoesSelect<false> | ConfiguracoesSelect<true>;
   };
-  locale: null;
+  locale: 'pt' | 'en';
   widgets: {
     collections: CollectionsWidget;
   };

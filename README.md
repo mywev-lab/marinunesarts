@@ -4,6 +4,8 @@ Site do Efúgio Atelier, de Mariane Nunes (Mari Nunes): pinturas em aquarela e g
 
 O site tem um **painel de conteúdo** (Payload CMS) em **`/admin`**: textos, obras, produtos, imagens e artigos do blog são editados por lá, sem mexer em código. Quando você salva, o site atualiza em poucos segundos.
 
+O site existe em **português** (efugioatelier.com) e em **inglês** (efugioatelier.com/en), com o seletor **PT / EN** no topo de todas as páginas. Veja [Versão em inglês](#versão-em-inglês).
+
 | Parte | Onde fica |
 | --- | --- |
 | Site e painel | Next.js + Payload CMS, publicado pela Vercel (região São Paulo), no domínio **efugioatelier.com** (o www.efugioatelier.com redireciona para ele, e o endereço marinunesarts.vercel.app continua funcionando) |
@@ -46,6 +48,18 @@ Algumas dicas:
 
 O painel guarda as versões anteriores de cada artigo (aba **Versões**), e dá para restaurar uma delas.
 
+## Versão em inglês
+
+Cada texto do painel tem uma versão em português e outra em inglês. Para editar o inglês, abra a página, obra, produto, artigo ou imagem e troque o seletor **Local** (no alto, à direita) de **Português** para **English**. Imagens, links, datas e o endereço (slug) valem para os dois idiomas; os textos, inclusive o texto alternativo das imagens e o preço como aparece no site (ex.: "US$ 10" e "US$10"), têm uma versão em cada idioma.
+
+- **Campo sem texto em inglês** aparece em português no site em inglês. Então, ao cadastrar uma obra ou um artigo novo, preencha primeiro em português e depois troque para **English** e escreva título, técnica, descrição etc.
+- **Links dentro dos textos** podem ser escritos sempre com o endereço em português (ex.: `/obras/limoes`, `/portfolio#aquarela`): no site em inglês eles levam sozinhos para a página em inglês.
+- **Endereços em inglês:** `/en`, `/en/portfolio`, `/en/shop` (Produtos), `/en/works/limoes` (Obras), `/en/blog`, `/en/about` (Sobre), `/en/contact` (Contato) e `/en/privacy` (Privacidade). O final do endereço (slug) é o mesmo nos dois idiomas.
+- **Textos fixos do site** (menu, botões como "Ask about this work", rótulos da ficha técnica, formulário) ficam em `src/lib/i18n.ts`, nos dois idiomas.
+- Os **assuntos do formulário de contato** em inglês precisam continuar iguais aos de `src/lib/i18n.ts` ("Buy an artwork", "Buy a print", "Request a commission", "Question about a digital product"), porque os botões das obras e produtos já abrem o formulário com o assunto escolhido.
+
+O Google recebe as duas versões ligadas entre si (hreflang) e o `sitemap.xml` lista os endereços dos dois idiomas.
+
 ## Endereços
 
 O site usa endereços sem `.html`: `/portfolio`, `/obras/limoes`, `/produtos/planner-luminous-days`, `/blog/giz-pastel-oleoso`, `/sobre`, `/contato`. Os endereços antigos (`/portfolio.html`, `/obras/limoes.html`, `/blog/giz-pastel-oleoso/`) redirecionam para os novos. O `sitemap.xml` e o `robots.txt` são gerados a partir do conteúdo.
@@ -58,9 +72,11 @@ O site usa endereços sem `.html`: `/portfolio`, `/obras/limoes`, `/produtos/pla
 | `src/collections/` | Obras, Produtos digitais, Artigos, Categorias, Imagens e Usuários |
 | `src/globals/` | Textos das páginas e configurações do site |
 | `src/blocks/` | Blocos que podem entrar no texto dos artigos e o editor de texto |
-| `src/app/(frontend)/` | Páginas do site e `style.css` (cores, fontes e layout) |
+| `src/views/` | Conteúdo de cada página do site, usado pelos dois idiomas |
+| `src/app/(frontend)/` | Endereços em português e `style.css` (cores, fontes e layout) |
+| `src/app/(en)/en/` | Endereços em inglês (usam as mesmas páginas de `src/views/`) |
 | `src/app/(payload)/` | Painel `/admin` e API (gerado pelo Payload, não precisa editar) |
-| `src/components/`, `src/lib/` | Partes reutilizadas: cabeçalho, rodapé, cartões, imagens, SEO, dados estruturados |
+| `src/components/`, `src/lib/` | Partes reutilizadas: cabeçalho, rodapé, cartões, imagens, SEO, dados estruturados e os textos fixos nos dois idiomas (`src/lib/i18n.ts`) |
 | `src/migrations/` | Alterações na estrutura do banco de dados |
 | `src/seed/` + `seed/` | Importação inicial: o conteúdo do site antigo e as imagens otimizadas que entraram no painel na primeira publicação |
 | `public/` | Ícones e `js/main.js` (menu no celular, filtros do portfólio, galeria e formulários) |

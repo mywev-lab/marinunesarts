@@ -16,6 +16,7 @@ import type {
   Produto,
   Sobre,
 } from '@/payload-types'
+import type { Locale } from './i18n'
 
 export type Configuracoes = Configuracoe
 export type PaginaProdutos = PaginaProduto
@@ -33,32 +34,33 @@ type GlobalMap = {
   privacidade: Privacidade
 }
 
-export const getGlobal = cache(async <S extends keyof GlobalMap>(slug: S): Promise<GlobalMap[S]> => {
+// Textos sem versão em inglês aparecem em português (fallback do painel)
+export const getGlobal = cache(async <S extends keyof GlobalMap>(slug: S, locale: Locale): Promise<GlobalMap[S]> => {
   const payload = await getClient()
-  return (await payload.findGlobal({ slug, depth: 2 })) as unknown as GlobalMap[S]
+  return (await payload.findGlobal({ slug, depth: 2, locale })) as unknown as GlobalMap[S]
 })
 
-export const getSettings = () => getGlobal('configuracoes')
+export const getSettings = (locale: Locale) => getGlobal('configuracoes', locale)
 
-export const getObras = cache(async (): Promise<Obra[]> => {
+export const getObras = cache(async (locale: Locale): Promise<Obra[]> => {
   const payload = await getClient()
-  const { docs } = await payload.find({ collection: 'obras', sort: 'order', limit: 500, depth: 1, pagination: false })
+  const { docs } = await payload.find({ collection: 'obras', sort: 'order', limit: 500, depth: 1, pagination: false, locale })
   return docs
 })
 
-export const getProdutos = cache(async (): Promise<Produto[]> => {
+export const getProdutos = cache(async (locale: Locale): Promise<Produto[]> => {
   const payload = await getClient()
-  const { docs } = await payload.find({ collection: 'produtos', sort: 'order', limit: 200, depth: 1, pagination: false })
+  const { docs } = await payload.find({ collection: 'produtos', sort: 'order', limit: 200, depth: 1, pagination: false, locale })
   return docs
 })
 
-export const getCategorias = cache(async (): Promise<Categoria[]> => {
+export const getCategorias = cache(async (locale: Locale): Promise<Categoria[]> => {
   const payload = await getClient()
-  const { docs } = await payload.find({ collection: 'categorias', sort: 'order', limit: 100, depth: 0, pagination: false })
+  const { docs } = await payload.find({ collection: 'categorias', sort: 'order', limit: 100, depth: 0, pagination: false, locale })
   return docs
 })
 
-export const getPosts = cache(async (): Promise<Post[]> => {
+export const getPosts = cache(async (locale: Locale): Promise<Post[]> => {
   const payload = await getClient()
   const { docs } = await payload.find({
     collection: 'posts',
@@ -67,10 +69,11 @@ export const getPosts = cache(async (): Promise<Post[]> => {
     limit: 500,
     depth: 2,
     pagination: false,
+    locale,
   })
   return docs
 })
 
-export const getObra = async (slug: string) => (await getObras()).find((o) => o.slug === slug)
-export const getProduto = async (slug: string) => (await getProdutos()).find((p) => p.slug === slug)
-export const getPost = async (slug: string) => (await getPosts()).find((p) => p.slug === slug)
+export const getObra = async (slug: string, locale: Locale) => (await getObras(locale)).find((o) => o.slug === slug)
+export const getProduto = async (slug: string, locale: Locale) => (await getProdutos(locale)).find((p) => p.slug === slug)
+export const getPost = async (slug: string, locale: Locale) => (await getPosts(locale)).find((p) => p.slug === slug)

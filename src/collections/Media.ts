@@ -20,6 +20,7 @@ export const Media: CollectionConfig = {
       name: 'alt',
       label: 'Texto alternativo',
       type: 'text',
+      localized: true,
       required: true,
       admin: { description: 'Descreva o que aparece na imagem. É lido por leitores de tela e pelo Google.' },
     },

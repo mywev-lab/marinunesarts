@@ -27,8 +27,8 @@ export const Posts: CollectionConfig = {
         {
           label: 'Conteúdo',
           fields: [
-            { name: 'title', label: 'Título', type: 'text', required: true },
-            { name: 'dek', label: 'Subtítulo', type: 'textarea', required: true, admin: { description: 'Aparece logo abaixo do título.' } },
+            { name: 'title', label: 'Título', type: 'text', localized: true, required: true },
+            { name: 'dek', label: 'Subtítulo', type: 'textarea', localized: true, required: true, admin: { description: 'Aparece logo abaixo do título.' } },
             {
               name: 'cover',
               label: 'Capa',
@@ -36,7 +36,7 @@ export const Posts: CollectionConfig = {
               fields: [
                 { name: 'image', label: 'Imagem', type: 'upload', relationTo: 'media', required: true },
                 { name: 'kind', label: 'Estilo', type: 'select', defaultValue: 'art', options: FIGURE_KINDS },
-                { name: 'caption', label: 'Legenda', type: 'richText', editor: inlineEditor },
+                { name: 'caption', label: 'Legenda', type: 'richText', editor: inlineEditor, localized: true },
               ],
             },
             {
@@ -44,6 +44,7 @@ export const Posts: CollectionConfig = {
               label: 'Texto do artigo',
               type: 'richText',
               editor: articleEditor,
+              localized: true,
               required: true,
               admin: {
                 description:
@@ -55,14 +56,14 @@ export const Posts: CollectionConfig = {
         {
           label: 'Cartão e SEO',
           fields: [
-            { name: 'excerpt', label: 'Resumo do cartão', type: 'textarea', required: true, admin: { description: 'Aparece nos cartões da página do blog.' } },
-            { name: 'seoTitle', label: 'Título para o Google', type: 'text', admin: { description: 'Até cerca de 60 caracteres. Se ficar vazio, usa o título.' } },
-            { name: 'description', label: 'Descrição para o Google', type: 'textarea', required: true, admin: { description: 'Até cerca de 160 caracteres.' } },
+            { name: 'excerpt', label: 'Resumo do cartão', type: 'textarea', localized: true, required: true, admin: { description: 'Aparece nos cartões da página do blog.' } },
+            { name: 'seoTitle', label: 'Título para o Google', type: 'text', localized: true, admin: { description: 'Até cerca de 60 caracteres. Se ficar vazio, usa o título.' } },
+            { name: 'description', label: 'Descrição para o Google', type: 'textarea', localized: true, required: true, admin: { description: 'Até cerca de 160 caracteres.' } },
             {
               name: 'keywords',
               label: 'Palavras-chave',
               type: 'array',
-              fields: [{ name: 'keyword', label: 'Palavra-chave', type: 'text', required: true }],
+              fields: [{ name: 'keyword', label: 'Palavra-chave', type: 'text', localized: true, required: true }],
             },
           ],
         },
@@ -74,12 +75,12 @@ export const Posts: CollectionConfig = {
               label: 'Chamada no fim do artigo',
               type: 'group',
               fields: [
-                { name: 'title', label: 'Título', type: 'text' },
-                { name: 'text', label: 'Texto', type: 'textarea' },
+                { name: 'title', label: 'Título', type: 'text', localized: true },
+                { name: 'text', label: 'Texto', type: 'textarea', localized: true },
                 {
                   type: 'row',
                   fields: [
-                    { name: 'label', label: 'Texto do botão', type: 'text' },
+                    { name: 'label', label: 'Texto do botão', type: 'text', localized: true },
                     { name: 'href', label: 'Link do botão', type: 'text', admin: { placeholder: '/portfolio#giz-pastel' } },
                   ],
                 },

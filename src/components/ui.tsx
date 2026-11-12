@@ -2,9 +2,10 @@ import React from 'react'
 
 import type { Categoria, Obra, Post, Produto } from '@/payload-types'
 import type { Configuracoes } from '@/lib/data'
+import { HTML_LANG, LOCALES, alternatePaths, dict, localizePath, type Locale } from '@/lib/i18n'
 import { asMedia, pick, srcSet, type MediaRef } from '@/lib/media'
 import { readingMinutes } from '@/lib/lexical'
-import { STATUS_LABEL, shortTechnique } from '@/lib/text'
+import { shortTechnique } from '@/lib/text'
 
 /* ---------------- imagem ---------------- */
 export function Picture({
@@ -67,19 +68,20 @@ const ICONS = {
   ),
 }
 
-export function SocialLinks({ settings, className = 'social-links' }: { settings: Configuracoes; className?: string }) {
+export function SocialLinks({ settings, locale, className = 'social-links' }: { settings: Configuracoes; locale: Locale; className?: string }) {
   const s = settings.social || {}
+  const t = dict(locale)
   const items: [string, string | null | undefined, React.ReactNode][] = [
     ['Instagram', s.instagram, ICONS.instagram],
     ['Pinterest', s.pinterest, ICONS.pinterest],
-    ['Loja na Etsy', s.etsy, ICONS.etsy],
+    [locale === 'pt' ? 'Loja na Etsy' : 'Etsy', s.etsy, ICONS.etsy],
   ]
   return (
     <div className={className}>
       {items
         .filter(([, url]) => url)
         .map(([label, url, icon]) => (
-          <a key={label} href={url!} target="_blank" rel="noopener" aria-label={`${label} de ${settings.siteName}`}>
+          <a key={label} href={url!} target="_blank" rel="noopener" aria-label={t.social(label, settings.siteName)}>
             {icon}
           </a>
         ))}
@@ -88,45 +90,92 @@ export function SocialLinks({ settings, className = 'social-links' }: { settings
 }
 
 /* ---------------- estrutura ---------------- */
+/** Menu: endereço em português e chave do texto no dicionário */
 export const NAV = [
-  ['/', 'Início', 'inicio'],
-  ['/portfolio', 'Portfólio', 'portfolio'],
-  ['/produtos', 'Produtos', 'produtos'],
-  ['/blog', 'Blog', 'blog'],
-  ['/sobre', 'Sobre', 'sobre'],
-  ['/contato', 'Contato', 'contato'],
+  ['/', 'inicio'],
+  ['/portfolio', 'portfolio'],
+  ['/produtos', 'produtos'],
+  ['/blog', 'blog'],
+  ['/sobre', 'sobre'],
+  ['/contato', 'contato'],
 ] as const
 
-export function SiteHeader({ settings, current, overlay = false }: { settings: Configuracoes; current?: string; overlay?: boolean }) {
+/** Seletor PT / EN: leva para a mesma página no outro idioma */
+export function LanguageSwitch({ locale, path }: { locale: Locale; path: string }) {
+  const t = dict(locale)
+  const paths = alternatePaths(path)
+  return (
+    <nav className="lang-switch" aria-label={t.language}>
+      {LOCALES.map((l) => (
+        <a
+          key={l}
+          href={paths[l]}
+          lang={HTML_LANG[l]}
+          hrefLang={HTML_LANG[l]}
+          title={t.languageNames[l]}
+          aria-current={l === locale ? 'true' : undefined}
+        >
+          <span aria-hidden="true">{l.toUpperCase()}</span>
+          <span className="visually-hidden">{t.languageNames[l]}</span>
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+export function SiteHeader({
+  settings,
+  locale,
+  path,
+  current,
+  overlay = false,
+}: {
+  settings: Configuracoes
+  locale: Locale
+  path: string
+  current?: string
+  overlay?: boolean
+}) {
+  const t = dict(locale)
   return (
     <>
       <a className="skip-link" href="#conteudo">
-        Pular para o conteúdo
+        {t.skip}
       </a>
       <header className={`site-header ${overlay ? 'site-header--overlay' : 'site-header--solid'}`}>
         <div className="header-inner">
-          <a className="brand" href="/" aria-label={`${settings.siteName}, página inicial`}>
+          <a className="brand" href={localizePath('/', locale)} aria-label={t.home(settings.siteName)}>
             <img className="brand-mark brand-mark--dark" src="/images/brand/efugio-ramo.webp" alt="" width={300} height={187} />
             <img className="brand-mark brand-mark--light" src="/images/brand/efugio-ramo-claro.webp" alt="" width={300} height={187} />
             <span className="brand-sub" aria-hidden="true">
               Atelier
             </span>
           </a>
-          <nav className="main-nav" id="main-nav" aria-label="Navegação principal">
+          <nav className="main-nav" id="main-nav" aria-label={t.mainNav}>
             <ul>
-              {NAV.map(([href, label, id]) => (
+              {NAV.map(([href, id]) => (
                 <li key={id}>
-                  <a href={href} aria-current={id === current ? 'page' : undefined}>
-                    {label}
+                  <a href={localizePath(href, locale)} aria-current={id === current ? 'page' : undefined}>
+                    {t.nav[id]}
                   </a>
                 </li>
               ))}
             </ul>
-            <SocialLinks settings={settings} className="social-links social-links--menu" />
+            <SocialLinks settings={settings} locale={locale} className="social-links social-links--menu" />
           </nav>
           <div className="header-actions">
-            <SocialLinks settings={settings} />
-            <button className="nav-toggle" id="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-nav">
+            <SocialLinks settings={settings} locale={locale} />
+            <LanguageSwitch locale={locale} path={path} />
+            <button
+              className="nav-toggle"
+              id="nav-toggle"
+              type="button"
+              aria-label={t.openMenu}
+              data-label-open={t.openMenu}
+              data-label-close={t.closeMenu}
+              aria-expanded="false"
+              aria-controls="main-nav"
+            >
               <span />
               <span />
             </button>
@@ -139,46 +188,52 @@ export function SiteHeader({ settings, current, overlay = false }: { settings: C
 
 export function Page({
   settings,
+  locale,
+  path,
   current,
   overlay,
   children,
 }: {
   settings: Configuracoes
+  locale: Locale
+  /** endereço desta página em português (o seletor de idioma calcula o outro) */
+  path: string
   current?: string
   overlay?: boolean
   children: React.ReactNode
 }) {
   return (
     <>
-      <SiteHeader settings={settings} current={current} overlay={overlay} />
+      <SiteHeader settings={settings} locale={locale} path={path} current={current} overlay={overlay} />
       <main id="conteudo">{children}</main>
-      <SiteFooter settings={settings} />
+      <SiteFooter settings={settings} locale={locale} />
     </>
   )
 }
 
-export function SiteFooter({ settings }: { settings: Configuracoes }) {
+export function SiteFooter({ settings, locale }: { settings: Configuracoes; locale: Locale }) {
   const s = settings.social || {}
+  const t = dict(locale)
   return (
     <footer className="site-footer">
       <div className="footer-inner">
         <div className="footer-brand">
           <p className="footer-name">
-            <img src="/images/brand/efugio-atelier-logo-claro.webp" alt={`${settings.siteName}, por Mari Nunes`} width={560} height={466} loading="lazy" />
+            <img src="/images/brand/efugio-atelier-logo-claro.webp" alt={t.logoAlt(settings.siteName)} width={560} height={466} loading="lazy" />
           </p>
           {settings.footerText ? <p>{settings.footerText}</p> : null}
           {settings.city ? <p>{settings.city}</p> : null}
         </div>
-        <nav className="footer-col" aria-label="Rodapé">
-          <p className="footer-heading">Navegue</p>
-          {NAV.map(([href, label, id]) => (
-            <a key={id} href={href}>
-              {label}
+        <nav className="footer-col" aria-label={t.footer}>
+          <p className="footer-heading">{t.footerExplore}</p>
+          {NAV.map(([href, id]) => (
+            <a key={id} href={localizePath(href, locale)}>
+              {t.nav[id]}
             </a>
           ))}
         </nav>
         <div className="footer-col">
-          <p className="footer-heading">Acompanhe</p>
+          <p className="footer-heading">{t.footerFollow}</p>
           {s.instagram ? (
             <a href={s.instagram} target="_blank" rel="noopener">
               Instagram
@@ -191,7 +246,7 @@ export function SiteFooter({ settings }: { settings: Configuracoes }) {
           ) : null}
           {s.etsy ? (
             <a href={s.etsy} target="_blank" rel="noopener">
-              Loja na Etsy
+              {t.etsyShop}
             </a>
           ) : null}
           <a href={`mailto:${settings.email}`}>{settings.email}</a>
@@ -199,12 +254,12 @@ export function SiteFooter({ settings }: { settings: Configuracoes }) {
       </div>
       <div className="footer-bottom">
         <p>
-          © <span data-year>{new Date().getFullYear()}</span> {settings.authorName}. Todos os direitos reservados.
+          © <span data-year>{new Date().getFullYear()}</span> {settings.authorName}. {t.rights}
         </p>
         <div className="footer-legal">
-          <a href="/privacidade">Política de privacidade</a>
+          <a href={localizePath('/privacidade', locale)}>{t.privacy}</a>
           <button type="button" className="footer-link-btn" data-cookie-prefs>
-            Preferências de cookies
+            {t.cookiePrefs}
           </button>
         </div>
       </div>
@@ -213,34 +268,31 @@ export function SiteFooter({ settings }: { settings: Configuracoes }) {
 }
 
 /* ---------------- aviso de cookies (LGPD) ---------------- */
-export const COOKIE_DEFAULTS = {
-  text: 'Usamos cookies para entender como o site é visitado e melhorar sua experiência. Você pode aceitar ou recusar: os cookies necessários para o site funcionar continuam ativos.',
-  acceptLabel: 'Aceitar cookies',
-  rejectLabel: 'Recusar',
-}
-
-/** Fica escondido; o /js/main.js mostra na primeira visita e guarda a escolha */
-export function CookieBanner({ settings }: { settings: Configuracoes }) {
+/** Fica escondido; o /js/main.js mostra na primeira visita e guarda a escolha (vale para os dois idiomas) */
+export function CookieBanner({ settings, locale }: { settings: Configuracoes; locale: Locale }) {
   const c = settings.cookies || {}
+  const t = dict(locale)
+  const defaults = t.cookieDefaults
   return (
-    <section className="cookie-banner" id="cookie-banner" aria-label="Aviso de cookies" hidden>
+    <section className="cookie-banner" id="cookie-banner" aria-label={t.cookieNotice} hidden>
       <p>
-        {c.text || COOKIE_DEFAULTS.text} <a href="/privacidade">Política de privacidade</a>
+        {c.text || defaults.text} <a href={localizePath('/privacidade', locale)}>{t.privacy}</a>
       </p>
       <div className="cookie-actions">
         <button type="button" className="btn btn-primary" data-cookie-choice="aceito">
-          {c.acceptLabel || COOKIE_DEFAULTS.acceptLabel}
+          {c.acceptLabel || defaults.acceptLabel}
         </button>
         <button type="button" className="btn btn-outline" data-cookie-choice="recusado">
-          {c.rejectLabel || COOKIE_DEFAULTS.rejectLabel}
+          {c.rejectLabel || defaults.rejectLabel}
         </button>
       </div>
     </section>
   )
 }
 
-export function Newsletter({ settings }: { settings: Configuracoes }) {
+export function Newsletter({ settings, locale }: { settings: Configuracoes; locale: Locale }) {
   const n = settings.newsletter || {}
+  const t = dict(locale)
   return (
     <section className="newsletter" aria-labelledby="newsletter-title">
       <div className="newsletter-inner">
@@ -248,13 +300,13 @@ export function Newsletter({ settings }: { settings: Configuracoes }) {
           <h2 id="newsletter-title">{n.title}</h2>
           {n.text ? <p>{n.text}</p> : null}
         </div>
-        <form className="newsletter-form" id="newsletter-form">
+        <form className="newsletter-form" id="newsletter-form" data-thanks={t.newsletterThanks}>
           <label className="visually-hidden" htmlFor="newsletter-email">
-            Seu e-mail
+            {t.newsletterEmail}
           </label>
-          <input type="email" id="newsletter-email" name="email" placeholder="seu@email.com" autoComplete="email" required />
+          <input type="email" id="newsletter-email" name="email" placeholder={t.newsletterPlaceholder} autoComplete="email" required />
           <button type="submit" className="btn btn-light">
-            {n.buttonLabel || 'Quero receber'}
+            {n.buttonLabel || t.newsletterButton}
           </button>
           <p className="form-note" id="newsletter-note" role="status" aria-live="polite" />
         </form>
@@ -263,7 +315,8 @@ export function Newsletter({ settings }: { settings: Configuracoes }) {
   )
 }
 
-export function SectionHead({ id, title, lede, link }: { id: string; title: string; lede?: string | null; link?: [string, string] }) {
+/** Título de seção; o link (endereço em português) vai para a página no idioma atual */
+export function SectionHead({ id, title, lede, link, locale = 'pt' }: { id: string; title: string; lede?: string | null; link?: [string, string]; locale?: Locale }) {
   return (
     <div className="section-head">
       <div>
@@ -271,7 +324,7 @@ export function SectionHead({ id, title, lede, link }: { id: string; title: stri
         {lede ? <p className="section-lede">{lede}</p> : null}
       </div>
       {link ? (
-        <a className="text-link" href={link[0]}>
+        <a className="text-link" href={localizePath(link[0], locale)}>
           {link[1]}
         </a>
       ) : null}
@@ -279,9 +332,10 @@ export function SectionHead({ id, title, lede, link }: { id: string; title: stri
   )
 }
 
-export function Breadcrumb({ items }: { items: [string, string][] }) {
+/** Trilha de navegação (endereços em português, convertidos para o idioma da página) */
+export function Breadcrumb({ items, locale }: { items: [string, string][]; locale: Locale }) {
   return (
-    <nav className="breadcrumb" aria-label="Você está em">
+    <nav className="breadcrumb" aria-label={dict(locale).breadcrumb}>
       <ol>
         {items.map(([href, label], i) =>
           i === items.length - 1 ? (
@@ -290,7 +344,7 @@ export function Breadcrumb({ items }: { items: [string, string][] }) {
             </li>
           ) : (
             <li key={href}>
-              <a href={href}>{label}</a>
+              <a href={localizePath(href, locale)}>{label}</a>
             </li>
           ),
         )}
@@ -311,14 +365,15 @@ export function JsonLd({ data }: { data: unknown | unknown[] }) {
 }
 
 /* ---------------- cartões ---------------- */
-export function WorkCard({ work, variant = 'portfolio' }: { work: Obra; variant?: 'portfolio' | 'shop' }) {
+export function WorkCard({ work, locale, variant = 'portfolio' }: { work: Obra; locale: Locale; variant?: 'portfolio' | 'shop' }) {
+  const t = dict(locale)
   const isShop = variant === 'shop'
   const details = [work.dimensions, work.year].filter(Boolean).join(', ')
   const meta = isShop ? `${shortTechnique(work.technique)}${work.format ? `, ${work.format.toLowerCase()}` : ''}` : shortTechnique(work.technique)
   const second = isShop ? work.dimensions : details
   return (
     <article className="card" data-categories={(work.categories || []).join(' ')}>
-      <a className="card-link" href={`/obras/${work.slug}`}>
+      <a className="card-link" href={localizePath(`/obras/${work.slug}`, locale)}>
         <div className="card-mat">
           <Picture media={work.image} maxSrc={800} sizes="(max-width: 600px) 46vw, (max-width: 1000px) 30vw, 22vw" />
         </div>
@@ -335,11 +390,11 @@ export function WorkCard({ work, variant = 'portfolio' }: { work: Obra; variant?
           </p>
           {isShop ? (
             <p className="card-foot">
-              <span className="card-price">Valor sob consulta</span>
+              <span className="card-price">{t.priceOnRequest}</span>
             </p>
           ) : work.status ? (
             <p className="card-foot">
-              <span className={`card-status card-status--${work.status}`}>{STATUS_LABEL[work.status]}</span>
+              <span className={`card-status card-status--${work.status}`}>{t.status[work.status]}</span>
             </p>
           ) : null}
         </div>
@@ -348,12 +403,13 @@ export function WorkCard({ work, variant = 'portfolio' }: { work: Obra; variant?
   )
 }
 
-export function DigitalCard({ product }: { product: Produto }) {
+export function DigitalCard({ product, locale }: { product: Produto; locale: Locale }) {
+  const t = dict(locale)
   const cover = product.images?.[0]?.image
   const isPrint = product.type === 'print'
   return (
     <article className="card">
-      <a className="card-link" href={`/produtos/${product.slug}`}>
+      <a className="card-link" href={localizePath(`/produtos/${product.slug}`, locale)}>
         <div className="card-mat card-mat--product">
           <Picture media={cover} maxFallback={800} sizes="(max-width: 600px) 92vw, (max-width: 1000px) 46vw, 24vw" />
         </div>
@@ -369,8 +425,8 @@ export function DigitalCard({ product }: { product: Produto }) {
             ) : null}
           </p>
           <p className="card-foot">
-            <span className="card-price">{product.price || 'Valor sob consulta'}</span>
-            <span className="card-tag">{isPrint ? 'Print' : 'Download digital'}</span>
+            <span className="card-price">{product.price || t.priceOnRequest}</span>
+            <span className="card-tag">{isPrint ? t.print : t.digitalDownload}</span>
           </p>
         </div>
       </a>
@@ -378,12 +434,12 @@ export function DigitalCard({ product }: { product: Produto }) {
   )
 }
 
-export function PostCard({ post, wide = false }: { post: Post; wide?: boolean }) {
+export function PostCard({ post, locale, wide = false }: { post: Post; locale: Locale; wide?: boolean }) {
   const category = typeof post.category === 'object' ? (post.category as Categoria) : null
   const isProduct = post.cover?.kind === 'product'
   return (
     <article className={`card post-card${wide ? ' post-card--wide' : ''}`}>
-      <a className="card-link" href={`/blog/${post.slug}`}>
+      <a className="card-link" href={localizePath(`/blog/${post.slug}`, locale)}>
         <div className={`card-mat${isProduct ? ' card-mat--product' : ''}`}>
           <Picture
             media={post.cover?.image}
@@ -396,7 +452,7 @@ export function PostCard({ post, wide = false }: { post: Post; wide?: boolean })
           <h3 className="card-title">{post.title}</h3>
           <p className="card-meta">{post.excerpt}</p>
           <p className="card-foot">
-            <span className="card-tag">Leitura de {readingMinutes(post.content as any)} min</span>
+            <span className="card-tag">{dict(locale).readingCard(readingMinutes(post.content as any))}</span>
           </p>
         </div>
       </a>

@@ -6,6 +6,21 @@ import { revalidateGlobal } from '../hooks/revalidate'
 const hooks = { afterChange: [revalidateGlobal] }
 const access = { read: () => true }
 
+/** Campos que valem para os dois idiomas (nomes, endereços, links e e-mail) */
+const SHARED = new Set(['siteName', 'authorName', 'siteUrl', 'email', 'instagram', 'etsy', 'pinterest', 'primaryLink', 'secondaryLink'])
+
+/**
+ * Textos das páginas têm uma versão em português e outra em inglês (seletor de idioma no topo do painel).
+ * Marca como "localized" todo campo de texto, menos os da lista SHARED.
+ */
+function localizeTexts(fields: Field[]): Field[] {
+  return fields.map((f) => {
+    if ((f.type === 'text' || f.type === 'textarea' || f.type === 'richText') && !SHARED.has(f.name)) return { ...f, localized: true } as Field
+    if (f.type === 'group' || f.type === 'array' || f.type === 'row' || f.type === 'collapsible') return { ...f, fields: localizeTexts(f.fields) } as Field
+    return f
+  })
+}
+
 const seo: Field = {
   name: 'seo',
   label: 'Google e redes sociais',
@@ -24,7 +39,7 @@ export const Configuracoes: GlobalConfig = {
   admin: { group: 'Configurações' },
   access,
   hooks,
-  fields: [
+  fields: localizeTexts([
     {
       type: 'row',
       fields: [
@@ -99,7 +114,7 @@ export const Configuracoes: GlobalConfig = {
       ],
     },
     { name: 'ogImage', label: 'Imagem padrão para compartilhamento', type: 'upload', relationTo: 'media' },
-  ],
+  ]),
 }
 
 export const Inicio: GlobalConfig = {
@@ -108,7 +123,7 @@ export const Inicio: GlobalConfig = {
   admin: { group: 'Páginas' },
   access,
   hooks,
-  fields: [
+  fields: localizeTexts([
     seo,
     {
       name: 'hero',
@@ -185,7 +200,7 @@ export const Inicio: GlobalConfig = {
         { name: 'linkLabel', label: 'Texto do link', type: 'text' },
       ],
     },
-  ],
+  ]),
 }
 
 export const Sobre: GlobalConfig = {
@@ -194,7 +209,7 @@ export const Sobre: GlobalConfig = {
   admin: { group: 'Páginas' },
   access,
   hooks,
-  fields: [
+  fields: localizeTexts([
     seo,
     { name: 'kicker', label: 'Linha acima do título', type: 'text' },
     { name: 'title', label: 'Título', type: 'text', required: true },
@@ -263,7 +278,7 @@ export const Sobre: GlobalConfig = {
         { name: 'label', label: 'Texto do botão', type: 'text' },
       ],
     },
-  ],
+  ]),
 }
 
 export const PaginaPortfolio: GlobalConfig = {
@@ -272,11 +287,11 @@ export const PaginaPortfolio: GlobalConfig = {
   admin: { group: 'Páginas' },
   access,
   hooks,
-  fields: [
+  fields: localizeTexts([
     seo,
     { name: 'title', label: 'Título', type: 'text', required: true },
     { name: 'lede', label: 'Texto', type: 'textarea' },
-  ],
+  ]),
 }
 
 export const PaginaProdutos: GlobalConfig = {
@@ -285,7 +300,7 @@ export const PaginaProdutos: GlobalConfig = {
   admin: { group: 'Páginas' },
   access,
   hooks,
-  fields: [
+  fields: localizeTexts([
     seo,
     { name: 'title', label: 'Título', type: 'text', required: true },
     { name: 'lede', label: 'Texto', type: 'textarea' },
@@ -328,7 +343,7 @@ export const PaginaProdutos: GlobalConfig = {
     },
     { name: 'purchaseNote', label: 'Aviso abaixo do botão de compra (produtos digitais)', type: 'textarea' },
     { name: 'digitalNote', label: 'Aviso sobre produto digital', type: 'textarea' },
-  ],
+  ]),
 }
 
 export const PaginaBlog: GlobalConfig = {
@@ -337,11 +352,11 @@ export const PaginaBlog: GlobalConfig = {
   admin: { group: 'Blog' },
   access,
   hooks,
-  fields: [
+  fields: localizeTexts([
     seo,
     { name: 'title', label: 'Título', type: 'text', required: true, defaultValue: 'Diário do Ateliê' },
     { name: 'intro', label: 'Introdução', type: 'textarea' },
-  ],
+  ]),
 }
 
 export const Contato: GlobalConfig = {
@@ -350,7 +365,7 @@ export const Contato: GlobalConfig = {
   admin: { group: 'Páginas' },
   access,
   hooks,
-  fields: [
+  fields: localizeTexts([
     seo,
     { name: 'title', label: 'Título', type: 'text', required: true },
     { name: 'intro', label: 'Texto', type: 'textarea' },
@@ -360,7 +375,7 @@ export const Contato: GlobalConfig = {
       type: 'array',
       fields: [{ name: 'text', label: 'Assunto', type: 'text', required: true }],
     },
-  ],
+  ]),
 }
 
 export const Privacidade: GlobalConfig = {
@@ -369,8 +384,8 @@ export const Privacidade: GlobalConfig = {
   admin: { group: 'Páginas' },
   access,
   hooks,
-  fields: [
+  fields: localizeTexts([
     { name: 'title', label: 'Título', type: 'text', required: true },
     { name: 'body', label: 'Texto', type: 'richText', editor: pageEditor },
-  ],
+  ]),
 }

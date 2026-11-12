@@ -68,6 +68,16 @@ export default buildConfig({
     dateFormat: 'dd/MM/yyyy HH:mm',
   },
   i18n: { supportedLanguages: { pt }, fallbackLanguage: 'pt' },
+  // Idiomas do conteúdo: português (site principal) e inglês (efugioatelier.com/en).
+  // Campo sem texto em inglês mostra o texto em português.
+  localization: {
+    locales: [
+      { code: 'pt', label: 'Português' },
+      { code: 'en', label: 'English' },
+    ],
+    defaultLocale: 'pt',
+    fallback: true,
+  },
   collections: [Obras, Produtos, Posts, Categorias, Media, Users],
   globals: [Inicio, Sobre, PaginaPortfolio, PaginaProdutos, Contato, Privacidade, PaginaBlog, Configuracoes],
   editor: pageEditor,

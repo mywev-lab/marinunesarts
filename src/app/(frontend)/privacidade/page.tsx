@@ -1,23 +1,7 @@
-import React from 'react'
+import { PrivacidadeView, privacidadeMetadata } from '@/views/privacidade'
 
-import { RichText } from '@/components/RichText'
-import { Page } from '@/components/ui'
-import { getGlobal, getSettings } from '@/lib/data'
-import { pageMetadata } from '@/lib/seo'
+export const generateMetadata = () => privacidadeMetadata('pt')
 
-export async function generateMetadata() {
-  const g = await getGlobal('privacidade')
-  return pageMetadata({ title: g.title, brand: true, description: 'Política de privacidade do site.', path: '/privacidade', noindex: true })
-}
-
-export default async function PrivacidadePage() {
-  const [settings, g] = await Promise.all([getSettings(), getGlobal('privacidade')])
-  return (
-    <Page settings={settings}>
-      <section className="legal container prose">
-        <h1>{g.title}</h1>
-        <RichText data={g.body as any} />
-      </section>
-    </Page>
-  )
+export default function Page() {
+  return <PrivacidadeView locale="pt" />
 }

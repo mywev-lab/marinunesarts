@@ -8,7 +8,9 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, GlobalAfterC
 function revalidateAll(context: Record<string, unknown> | undefined) {
   if (context?.disableRevalidate) return
   try {
+    // site em português e em inglês (/en tem o próprio layout)
     revalidatePath('/', 'layout')
+    revalidatePath('/en', 'layout')
   } catch {
     // fora do Next (scripts de importação), não há o que revalidar
   }
