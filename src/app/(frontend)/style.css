@@ -355,6 +355,8 @@ h3, .h3 { font-size: 1.3rem; line-height: 1.25; }
 .about-page h1 { max-width: 20ch; margin-bottom: 1.6rem; }
 .about-page .about-photo { max-width: 360px; }
 .prose p { color: var(--ink-soft); max-width: 62ch; margin-bottom: 1.05rem; }
+/* subtítulos dentro do texto da página Sobre */
+.about-page .prose h2 { font-size: clamp(1.4rem, 2.2vw, 1.75rem); max-width: 36ch; margin: 2.6rem 0 1rem; }
 .pull-quote {
   font-family: var(--font-display); font-size: clamp(1.35rem, 2.4vw, 1.75rem); line-height: 1.35;
   color: var(--olive); max-width: 28ch; margin-top: 2rem; padding-left: 1.2rem; border-left: 2px solid var(--terracotta);
