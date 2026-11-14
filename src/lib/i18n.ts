@@ -79,6 +79,7 @@ const pt = {
     natureza: 'Animais e natureza',
     abstrata: 'Abstrata e moderna',
     colecoes: 'Coleções',
+    releituras: 'Releituras',
   } as Record<string, string>,
   // início
   manifesto: 'Manifesto',
@@ -226,6 +227,7 @@ const en: Dictionary = {
     natureza: 'Animals and nature',
     abstrata: 'Abstract and modern',
     colecoes: 'Collections',
+    releituras: 'Reinterpretations',
   },
   manifesto: 'Statement',
   homeProducts: 'Shop',

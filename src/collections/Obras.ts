@@ -10,6 +10,7 @@ export const WORK_CATEGORIES = [
   { label: 'Animais e natureza', value: 'natureza' },
   { label: 'Abstrata e moderna', value: 'abstrata' },
   { label: 'Coleções', value: 'colecoes' },
+  { label: 'Releituras', value: 'releituras' },
 ]
 
 export const WORK_STATUS = [

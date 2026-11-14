@@ -164,7 +164,7 @@ export interface Obra {
    * Deixe vazio para mostrar "Consulte a disponibilidade".
    */
   status?: ('disponivel' | 'colecao-particular' | 'vendida') | null;
-  categories?: ('aquarela' | 'giz-pastel' | 'paisagens' | 'natureza' | 'abstrata' | 'colecoes')[] | null;
+  categories?: ('aquarela' | 'giz-pastel' | 'paisagens' | 'natureza' | 'abstrata' | 'colecoes' | 'releituras')[] | null;
   /**
    * Deixe uma linha em branco para separar parágrafos.
    */

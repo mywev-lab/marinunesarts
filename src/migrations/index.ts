@@ -10,6 +10,8 @@ import * as migration_20261112_160000_conteudo_en from './20261112_160000_conteu
 import * as migration_20261112_190000_prints_de_todas_as_obras from './20261112_190000_prints_de_todas_as_obras';
 import * as migration_20261114_120000_sobre_novo_texto from './20261114_120000_sobre_novo_texto';
 import * as migration_20261114_130000_inicio_resumo_sobre from './20261114_130000_inicio_resumo_sobre';
+import * as migration_20261114_194348_filtro_releituras from './20261114_194348_filtro_releituras';
+import * as migration_20261114_200000_releituras from './20261114_200000_releituras';
 
 export const migrations = [
   {
@@ -71,5 +73,15 @@ export const migrations = [
     up: migration_20261114_130000_inicio_resumo_sobre.up,
     down: migration_20261114_130000_inicio_resumo_sobre.down,
     name: '20261114_130000_inicio_resumo_sobre',
+  },
+  {
+    up: migration_20261114_194348_filtro_releituras.up,
+    down: migration_20261114_194348_filtro_releituras.down,
+    name: '20261114_194348_filtro_releituras',
+  },
+  {
+    up: migration_20261114_200000_releituras.up,
+    down: migration_20261114_200000_releituras.down,
+    name: '20261114_200000_releituras',
   },
 ];
