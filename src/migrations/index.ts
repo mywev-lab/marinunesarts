@@ -9,6 +9,7 @@ import * as migration_20261112_152441_idiomas_pt_en from './20261112_152441_idio
 import * as migration_20261112_160000_conteudo_en from './20261112_160000_conteudo_en';
 import * as migration_20261112_190000_prints_de_todas_as_obras from './20261112_190000_prints_de_todas_as_obras';
 import * as migration_20261114_120000_sobre_novo_texto from './20261114_120000_sobre_novo_texto';
+import * as migration_20261114_130000_inicio_resumo_sobre from './20261114_130000_inicio_resumo_sobre';
 
 export const migrations = [
   {
@@ -65,5 +66,10 @@ export const migrations = [
     up: migration_20261114_120000_sobre_novo_texto.up,
     down: migration_20261114_120000_sobre_novo_texto.down,
     name: '20261114_120000_sobre_novo_texto',
+  },
+  {
+    up: migration_20261114_130000_inicio_resumo_sobre.up,
+    down: migration_20261114_130000_inicio_resumo_sobre.down,
+    name: '20261114_130000_inicio_resumo_sobre',
   },
 ];
