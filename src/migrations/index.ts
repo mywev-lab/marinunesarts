@@ -13,6 +13,7 @@ import * as migration_20261114_130000_inicio_resumo_sobre from './20261114_13000
 import * as migration_20261114_194348_filtro_releituras from './20261114_194348_filtro_releituras';
 import * as migration_20261114_200000_releituras from './20261114_200000_releituras';
 import * as migration_20261114_210000_roda_gigante from './20261114_210000_roda_gigante';
+import * as migration_20261115_120000_inicio_colecoes from './20261115_120000_inicio_colecoes';
 
 export const migrations = [
   {
@@ -89,5 +90,10 @@ export const migrations = [
     up: migration_20261114_210000_roda_gigante.up,
     down: migration_20261114_210000_roda_gigante.down,
     name: '20261114_210000_roda_gigante',
+  },
+  {
+    up: migration_20261115_120000_inicio_colecoes.up,
+    down: migration_20261115_120000_inicio_colecoes.down,
+    name: '20261115_120000_inicio_colecoes',
   },
 ];

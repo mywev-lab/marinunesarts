@@ -97,7 +97,12 @@ export const Obras: CollectionConfig = {
       defaultValue: 100,
       admin: { position: 'sidebar', description: 'Números menores aparecem primeiro.' },
     },
-    { name: 'showOnHome', label: 'Mostrar em "Do ateliê" na página inicial', type: 'checkbox', admin: { position: 'sidebar' } },
+    {
+      name: 'showOnHome',
+      label: 'Fixar em "Do ateliê" na página inicial',
+      type: 'checkbox',
+      admin: { position: 'sidebar', description: 'Sem obras fixadas, a seção mostra as mais recentes.' },
+    },
     { name: 'forSale', label: 'Mostrar na página Produtos (obras à venda)', type: 'checkbox', admin: { position: 'sidebar' } },
   ],
 }

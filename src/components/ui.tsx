@@ -442,6 +442,37 @@ export function DigitalCard({ product, locale }: { product: Produto; locale: Loc
   )
 }
 
+/** Coleção de prints em destaque: as pinturas do conjunto lado a lado, num cartão largo. */
+export function CollectionCard({ product, works, locale }: { product: Produto; works: Obra[]; locale: Locale }) {
+  const t = dict(locale)
+  const paintings = works.filter((w) => typeof w.image === 'object' && w.image)
+  return (
+    <article className="card card--collection">
+      <a className="card-link" href={localizePath(`/produtos/${product.slug}`, locale)}>
+        {paintings.length ? (
+          <div className="card-mat card-mat--diptych">
+            {paintings.map((w) => (
+              <Picture key={w.id} media={w.image} maxSrc={800} sizes="(max-width: 700px) 40vw, 20vw" />
+            ))}
+          </div>
+        ) : (
+          <div className="card-mat card-mat--product">
+            <Picture media={product.images?.[0]?.image} maxFallback={800} sizes="(max-width: 700px) 92vw, 46vw" />
+          </div>
+        )}
+        <div className="card-body">
+          <h3 className="card-title">{product.name}</h3>
+          <p className="card-meta">{product.cardMeta || product.kind}</p>
+          <p className="card-foot">
+            <span className="card-price">{product.price || t.priceOnRequest}</span>
+            <span className="card-tag">{t.print}</span>
+          </p>
+        </div>
+      </a>
+    </article>
+  )
+}
+
 export function PostCard({ post, locale, wide = false }: { post: Post; locale: Locale; wide?: boolean }) {
   const category = typeof post.category === 'object' ? (post.category as Categoria) : null
   const isProduct = post.cover?.kind === 'product'

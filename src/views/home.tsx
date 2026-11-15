@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { DigitalCard, JsonLd, Newsletter, Page, Picture, SectionHead, WorkCard } from '@/components/ui'
+import { CollectionCard, DigitalCard, JsonLd, Newsletter, Page, Picture, SectionHead, WorkCard } from '@/components/ui'
 import { getGlobal, getObras, getSettings } from '@/lib/data'
 import { dict, localizePath, type Locale } from '@/lib/i18n'
 import { asMedia } from '@/lib/media'
@@ -21,7 +21,20 @@ export async function HomeView({ locale }: { locale: Locale }) {
   const L = (p: string) => localizePath(p, locale)
   const { hero, produtos, statement, atelie, sobre } = home
   const featured = typeof hero.featuredWork === 'object' ? (hero.featuredWork as Obra) : null
-  const studio = obras.filter((o) => o.showOnHome)
+
+  // Coleções em destaque: as pinturas de cada conjunto (com imagem) vêm da lista de obras
+  const byId = new Map(obras.map((o) => [o.id, o]))
+  const worksOf = (p: Produto) =>
+    (p.works || []).map((w) => byId.get(typeof w === 'object' ? w.id : w)).filter((w): w is Obra => Boolean(w))
+  const collections = docs<Produto>(produtos?.collections)
+  const inCollections = new Set(collections.flatMap((p) => worksOf(p).map((w) => w.id)))
+
+  // "Do ateliê": obras fixadas primeiro, depois as publicadas mais recentemente (sem repetir as das coleções)
+  const pinned = obras.filter((o) => o.showOnHome)
+  const recent = obras
+    .filter((o) => !o.showOnHome && !inCollections.has(o.id))
+    .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+  const studio = [...pinned, ...recent].slice(0, Math.max(6, pinned.length))
   const photo = asMedia(settings.person?.photo)
 
   return (
@@ -66,6 +79,13 @@ export async function HomeView({ locale }: { locale: Locale }) {
             lede={produtos?.lede}
             link={['/produtos', produtos?.linkLabel || t.seeAllProducts]}
           />
+          {collections.length ? (
+            <div className="grid grid--2 grid--collections">
+              {collections.map((p) => (
+                <CollectionCard key={p.id} product={p} works={worksOf(p)} locale={locale} />
+              ))}
+            </div>
+          ) : null}
           <div className="grid grid--4">
             {docs<Produto>(produtos?.digital).map((p) => (
               <DigitalCard key={p.id} product={p} locale={locale} />

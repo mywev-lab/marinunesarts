@@ -165,6 +165,14 @@ export const Inicio: GlobalConfig = {
         { name: 'title', label: 'Título', type: 'text' },
         { name: 'lede', label: 'Texto', type: 'textarea' },
         { name: 'linkLabel', label: 'Texto do link', type: 'text' },
+        {
+          name: 'collections',
+          label: 'Coleções em destaque',
+          type: 'relationship',
+          relationTo: 'produtos',
+          hasMany: true,
+          admin: { description: 'Aparecem primeiro, em tamanho grande, com as pinturas da coleção lado a lado.' },
+        },
         { name: 'digital', label: 'Produtos digitais em destaque', type: 'relationship', relationTo: 'produtos', hasMany: true },
         { name: 'works', label: 'Obras à venda em destaque', type: 'relationship', relationTo: 'obras', hasMany: true },
       ],
@@ -183,7 +191,10 @@ export const Inicio: GlobalConfig = {
       name: 'atelie',
       label: 'Seção "Do ateliê"',
       type: 'group',
-      admin: { description: 'As obras desta seção são as marcadas com "Mostrar em Do ateliê" em Obras.' },
+      admin: {
+        description:
+          'Mostra as 6 obras publicadas mais recentemente (sem repetir as das coleções em destaque). Obras marcadas com "Fixar em Do ateliê" aparecem primeiro.',
+      },
       fields: [
         { name: 'title', label: 'Título', type: 'text' },
         { name: 'lede', label: 'Texto', type: 'textarea' },

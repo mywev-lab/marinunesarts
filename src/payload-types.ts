@@ -189,6 +189,9 @@ export interface Obra {
    * Números menores aparecem primeiro.
    */
   order?: number | null;
+  /**
+   * Sem obras fixadas, a seção mostra as mais recentes.
+   */
   showOnHome?: boolean | null;
   forSale?: boolean | null;
   updatedAt: string;
@@ -856,6 +859,10 @@ export interface Inicio {
     title?: string | null;
     lede?: string | null;
     linkLabel?: string | null;
+    /**
+     * Aparecem primeiro, em tamanho grande, com as pinturas da coleção lado a lado.
+     */
+    collections?: (number | Produto)[] | null;
     digital?: (number | Produto)[] | null;
     works?: (number | Obra)[] | null;
   };
@@ -867,7 +874,7 @@ export interface Inicio {
     text?: string | null;
   };
   /**
-   * As obras desta seção são as marcadas com "Mostrar em Do ateliê" em Obras.
+   * Mostra as 6 obras publicadas mais recentemente (sem repetir as das coleções em destaque). Obras marcadas com "Fixar em Do ateliê" aparecem primeiro.
    */
   atelie?: {
     title?: string | null;
@@ -1175,6 +1182,7 @@ export interface InicioSelect<T extends boolean = true> {
         title?: T;
         lede?: T;
         linkLabel?: T;
+        collections?: T;
         digital?: T;
         works?: T;
       };
