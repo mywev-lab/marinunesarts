@@ -49,6 +49,8 @@ export async function ObraView({ locale, slug }: { locale: Locale; slug: string 
     [t.specs.year, w.year],
     [t.specs.format, w.format],
     [t.specs.status, w.status ? t.status[w.status] : t.askAvailability],
+    // o original pode sair emoldurado enquanto estiver à venda
+    [t.specs.frame, w.status === 'vendida' || w.status === 'colecao-particular' ? '' : t.frameChoices],
   ].filter(([, v]) => v) as [string, string][]
   const mockups = (w.mockups || []).map((m) => asMedia(m.image)).filter(Boolean)
   const post = await techniquePost(w.technique, locale)
