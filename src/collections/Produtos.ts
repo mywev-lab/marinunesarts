@@ -82,6 +82,16 @@ export const Produtos: CollectionConfig = {
       admin: { description: 'A primeira imagem é a capa.' },
       fields: [{ name: 'image', label: 'Imagem', type: 'upload', relationTo: 'media', required: true }],
     },
+    {
+      name: 'mockup',
+      label: 'Mockup para a página inicial',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description:
+          'Foto do produto na parede, usada quando ele aparece em "Coleções em destaque" na página inicial. Sem mockup, aparecem as pinturas lado a lado. O ponto de foco da imagem define o enquadramento.',
+      },
+    },
     { name: 'summary', label: 'Resumo', type: 'textarea', localized: true, required: true },
     { name: 'cardMeta', label: 'Linha curta do cartão', type: 'text', localized: true, admin: { placeholder: '71 páginas, sem datas' } },
     {

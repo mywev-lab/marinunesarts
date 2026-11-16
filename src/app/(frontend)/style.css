@@ -322,6 +322,7 @@ h3, .h3 { font-size: 1.3rem; line-height: 1.25; }
   gap: 7%; padding: 9% 9%;
 }
 .card-mat--diptych picture { position: static; flex: 1 1 0; min-width: 0; height: 100%; }
+.card-mat--mockup { aspect-ratio: 4 / 3; }
 .card--collection .card-title { font-size: clamp(1.35rem, 2vw, 1.6rem); }
 .card-link:hover .card-mat { background: var(--mat-hover); }
 .card-link:hover .card-mat img { transform: translateY(-3px); }

@@ -14,6 +14,8 @@ import * as migration_20261114_194348_filtro_releituras from './20261114_194348_
 import * as migration_20261114_200000_releituras from './20261114_200000_releituras';
 import * as migration_20261114_210000_roda_gigante from './20261114_210000_roda_gigante';
 import * as migration_20261115_120000_inicio_colecoes from './20261115_120000_inicio_colecoes';
+import * as migration_20261116_201655_mockup_produtos from './20261116_201655_mockup_produtos';
+import * as migration_20261116_210000_mockups_colecoes from './20261116_210000_mockups_colecoes';
 
 export const migrations = [
   {
@@ -95,5 +97,15 @@ export const migrations = [
     up: migration_20261115_120000_inicio_colecoes.up,
     down: migration_20261115_120000_inicio_colecoes.down,
     name: '20261115_120000_inicio_colecoes',
+  },
+  {
+    up: migration_20261116_201655_mockup_produtos.up,
+    down: migration_20261116_201655_mockup_produtos.down,
+    name: '20261116_201655_mockup_produtos',
+  },
+  {
+    up: migration_20261116_210000_mockups_colecoes.up,
+    down: migration_20261116_210000_mockups_colecoes.down,
+    name: '20261116_210000_mockups_colecoes',
   },
 ];

@@ -16,6 +16,7 @@ export function Picture({
   maxFallback = 800,
   maxSrc = Infinity,
   className,
+  imgStyle,
 }: {
   media: MediaRef
   sizes?: string
@@ -24,6 +25,7 @@ export function Picture({
   maxFallback?: number
   maxSrc?: number
   className?: string
+  imgStyle?: React.CSSProperties
 }) {
   const m = asMedia(media)
   if (!m) return null
@@ -41,6 +43,7 @@ export function Picture({
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
         fetchPriority={eager ? 'high' : undefined}
+        style={imgStyle}
       />
     </picture>
   )
@@ -442,14 +445,27 @@ export function DigitalCard({ product, locale }: { product: Produto; locale: Loc
   )
 }
 
-/** Coleção de prints em destaque: as pinturas do conjunto lado a lado, num cartão largo. */
+/**
+ * Coleção de prints em destaque, num cartão largo: o mockup (as pinturas emolduradas na parede), enquadrado
+ * pelo ponto de foco da imagem; sem mockup, as pinturas do conjunto lado a lado.
+ */
 export function CollectionCard({ product, works, locale }: { product: Produto; works: Obra[]; locale: Locale }) {
   const t = dict(locale)
+  const mockup = asMedia(product.mockup)
   const paintings = works.filter((w) => typeof w.image === 'object' && w.image)
   return (
     <article className="card card--collection">
       <a className="card-link" href={localizePath(`/produtos/${product.slug}`, locale)}>
-        {paintings.length ? (
+        {mockup ? (
+          <div className="card-mat card-mat--product card-mat--mockup">
+            <Picture
+              media={mockup}
+              maxFallback={1200}
+              sizes="(max-width: 700px) 92vw, 46vw"
+              imgStyle={{ objectPosition: `${mockup.focalX ?? 50}% ${mockup.focalY ?? 50}%` }}
+            />
+          </div>
+        ) : paintings.length ? (
           <div className="card-mat card-mat--diptych">
             {paintings.map((w) => (
               <Picture key={w.id} media={w.image} maxSrc={800} sizes="(max-width: 700px) 40vw, 20vw" />

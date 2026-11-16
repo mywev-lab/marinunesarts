@@ -302,6 +302,10 @@ export interface Produto {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Foto do produto na parede, usada quando ele aparece em "Coleções em destaque" na página inicial. Sem mockup, aparecem as pinturas lado a lado. O ponto de foco da imagem define o enquadramento.
+   */
+  mockup?: (number | null) | Media;
   summary: string;
   cardMeta?: string | null;
   specs?:
@@ -614,6 +618,7 @@ export interface ProdutosSelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
+  mockup?: T;
   summary?: T;
   cardMeta?: T;
   specs?:
