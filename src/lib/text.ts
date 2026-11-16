@@ -36,3 +36,17 @@ export function contactUrl({ assunto, obra }: { assunto?: string; obra?: string 
   const s = q.toString()
   return `${localizePath('/contato', locale)}${s ? `?${s}` : ''}`
 }
+
+/** Link do WhatsApp com a mensagem já escrita (wa.me aceita ?text=) */
+export function whatsappUrl(link: string, text?: string): string {
+  if (!text) return link
+  return `${link}${link.includes('?') ? '&' : '?'}text=${encodeURIComponent(text)}`
+}
+
+/** Número do WhatsApp para exibir: https://wa.me/5511983072921 → (11) 98307-2921 */
+export function whatsappNumber(link: string): string {
+  const d = link.replace(/\D/g, '')
+  if (d.length === 13 && d.startsWith('55')) return `(${d.slice(2, 4)}) ${d.slice(4, 9)}-${d.slice(9)}`
+  if (d.length === 12 && d.startsWith('55')) return `(${d.slice(2, 4)}) ${d.slice(4, 8)}-${d.slice(8)}`
+  return d ? `+${d}` : ''
+}

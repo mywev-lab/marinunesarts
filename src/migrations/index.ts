@@ -17,6 +17,8 @@ import * as migration_20261115_120000_inicio_colecoes from './20261115_120000_in
 import * as migration_20261116_201655_mockup_produtos from './20261116_201655_mockup_produtos';
 import * as migration_20261116_210000_mockups_colecoes from './20261116_210000_mockups_colecoes';
 import * as migration_20261116_220000_prints_moldura from './20261116_220000_prints_moldura';
+import * as migration_20261116_230000_whatsapp from './20261116_230000_whatsapp';
+import * as migration_20261116_230500_whatsapp_link from './20261116_230500_whatsapp_link';
 
 export const migrations = [
   {
@@ -113,5 +115,15 @@ export const migrations = [
     up: migration_20261116_220000_prints_moldura.up,
     down: migration_20261116_220000_prints_moldura.down,
     name: '20261116_220000_prints_moldura',
+  },
+  {
+    up: migration_20261116_230000_whatsapp.up,
+    down: migration_20261116_230000_whatsapp.down,
+    name: '20261116_230000_whatsapp',
+  },
+  {
+    up: migration_20261116_230500_whatsapp_link.up,
+    down: migration_20261116_230500_whatsapp_link.down,
+    name: '20261116_230500_whatsapp_link',
   },
 ];

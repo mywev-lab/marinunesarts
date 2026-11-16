@@ -505,6 +505,8 @@ h3, .h3 { font-size: 1.3rem; line-height: 1.25; }
 .contact-page { display: grid; gap: 2.5rem; padding-block: clamp(2.5rem, 6vw, 5rem); }
 .contact-intro h1 { margin-bottom: 1.2rem; }
 .contact-intro p { color: var(--ink-soft); max-width: 44ch; }
+.contact-whatsapp { margin-top: .6rem; }
+.contact-whatsapp a { color: var(--ink); text-decoration-thickness: 1px; text-underline-offset: .25em; }
 .contact-email { margin-top: 1.6rem; }
 .contact-email a { font-family: var(--font-display); font-size: 1.35rem; color: var(--ink); text-decoration-thickness: 1px; text-underline-offset: .25em; }
 .contact-location { margin-top: .3rem; font-size: .95rem; }
@@ -572,6 +574,23 @@ h3, .h3 { font-size: 1.3rem; line-height: 1.25; }
 .footer-legal { display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; }
 .footer-link-btn { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
 .footer-link-btn:hover { text-decoration: underline; }
+
+/* Botão flutuante do WhatsApp: círculo no canto inferior direito (pequeno, para não cobrir os botões das páginas);
+   some enquanto o aviso de cookies estiver aberto */
+.wa-float {
+  position: fixed; z-index: 80; right: var(--gutter); bottom: var(--gutter);
+  display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+  width: 3.4rem; height: 3.4rem; border-radius: 999px;
+  background: var(--olive-deep); color: var(--paper); text-decoration: none;
+  box-shadow: 0 8px 24px rgba(43, 38, 31, .22);
+  transition: background .2s ease, transform .2s ease;
+}
+.wa-float svg { width: 1.55rem; height: 1.55rem; fill: currentColor; flex: none; }
+.wa-float:hover { background: var(--olive); }
+.wa-float:focus-visible { outline: 2px solid var(--olive-deep); outline-offset: 3px; }
+@media (prefers-reduced-motion: no-preference) { .wa-float:hover { transform: translateY(-2px); } }
+body:has(.cookie-banner:not([hidden])) .wa-float { display: none; }
+@media print { .wa-float { display: none; } }
 
 /* Aviso de cookies: cartão discreto no canto, sem bloquear a página */
 .cookie-banner {

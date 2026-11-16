@@ -5,7 +5,7 @@ import type { Configuracoes } from '@/lib/data'
 import { HTML_LANG, LOCALES, alternatePaths, dict, localizePath, type Locale } from '@/lib/i18n'
 import { asMedia, pick, srcSet, type MediaRef } from '@/lib/media'
 import { readingMinutes } from '@/lib/lexical'
-import { shortTechnique } from '@/lib/text'
+import { shortTechnique, whatsappNumber, whatsappUrl } from '@/lib/text'
 
 /* ---------------- imagem ---------------- */
 export function Picture({
@@ -69,6 +69,43 @@ const ICONS = {
       <path d="M8 5h8.6l-.4 2.6M8 5v14m0-14H6.5M8 19h8.3l.6-2.8M8 19H6.5M8 12h5.4" />
     </svg>
   ),
+  // símbolo do WhatsApp (Simple Icons, CC0)
+  whatsapp: (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="icon-solid">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+    </svg>
+  ),
+}
+
+/** Botão flutuante do WhatsApp (canto inferior direito), com a mensagem já escrita */
+export function WhatsAppButton({ settings, locale, text }: { settings: Configuracoes; locale: Locale; text?: string }) {
+  const link = settings.social?.whatsapp
+  if (!link) return null
+  const t = dict(locale)
+  return (
+    <a
+      className="wa-float"
+      href={whatsappUrl(link, text || t.whatsappHello)}
+      target="_blank"
+      rel="noopener"
+      aria-label={t.whatsappChat}
+      title={t.whatsappChat}
+    >
+      {ICONS.whatsapp}
+    </a>
+  )
+}
+
+/** Link de texto para o WhatsApp, com o número: "WhatsApp (11) 98307-2921" */
+export function WhatsAppLink({ settings, locale, className }: { settings: Configuracoes; locale: Locale; className?: string }) {
+  const link = settings.social?.whatsapp
+  if (!link) return null
+  const t = dict(locale)
+  return (
+    <a className={className} href={whatsappUrl(link, t.whatsappHello)} target="_blank" rel="noopener">
+      {t.whatsapp} {whatsappNumber(link)}
+    </a>
+  )
 }
 
 export function SocialLinks({ settings, locale, className = 'social-links' }: { settings: Configuracoes; locale: Locale; className?: string }) {
@@ -195,6 +232,7 @@ export function Page({
   path,
   current,
   overlay,
+  whatsappText,
   children,
 }: {
   settings: Configuracoes
@@ -203,6 +241,8 @@ export function Page({
   path: string
   current?: string
   overlay?: boolean
+  /** mensagem já escrita no botão do WhatsApp (ex.: o nome da obra desta página) */
+  whatsappText?: string
   children: React.ReactNode
 }) {
   return (
@@ -210,6 +250,7 @@ export function Page({
       <SiteHeader settings={settings} locale={locale} path={path} current={current} overlay={overlay} />
       <main id="conteudo">{children}</main>
       <SiteFooter settings={settings} locale={locale} />
+      <WhatsAppButton settings={settings} locale={locale} text={whatsappText} />
     </>
   )
 }
@@ -252,6 +293,7 @@ export function SiteFooter({ settings, locale }: { settings: Configuracoes; loca
               {t.etsyShop}
             </a>
           ) : null}
+          <WhatsAppLink settings={settings} locale={locale} />
           <a href={`mailto:${settings.email}`}>{settings.email}</a>
         </div>
       </div>

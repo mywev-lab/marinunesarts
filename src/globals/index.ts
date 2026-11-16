@@ -7,7 +7,7 @@ const hooks = { afterChange: [revalidateGlobal] }
 const access = { read: () => true }
 
 /** Campos que valem para os dois idiomas (nomes, endereços, links e e-mail) */
-const SHARED = new Set(['siteName', 'authorName', 'siteUrl', 'email', 'instagram', 'etsy', 'pinterest', 'primaryLink', 'secondaryLink'])
+const SHARED = new Set(['siteName', 'authorName', 'siteUrl', 'email', 'instagram', 'etsy', 'pinterest', 'whatsapp', 'primaryLink', 'secondaryLink'])
 
 /**
  * Textos das páginas têm uma versão em português e outra em inglês (seletor de idioma no topo do painel).
@@ -70,6 +70,15 @@ export const Configuracoes: GlobalConfig = {
         { name: 'instagram', label: 'Instagram', type: 'text' },
         { name: 'etsy', label: 'Loja na Etsy', type: 'text' },
         { name: 'pinterest', label: 'Pinterest', type: 'text', admin: { description: 'O ícone só aparece quando houver um link.' } },
+        {
+          name: 'whatsapp',
+          label: 'WhatsApp',
+          type: 'text',
+          admin: {
+            description:
+              'Link do WhatsApp, no formato https://wa.me/55 + DDD + número (ex.: https://wa.me/5511983072921). O botão flutuante só aparece quando houver um link.',
+          },
+        },
       ],
     },
     { name: 'footerText', label: 'Texto do rodapé', type: 'text' },

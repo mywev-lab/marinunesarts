@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Page, SocialLinks } from '@/components/ui'
+import { Page, SocialLinks, WhatsAppLink } from '@/components/ui'
 import { getGlobal, getObras, getProdutos, getSettings } from '@/lib/data'
 import { dict, type Locale } from '@/lib/i18n'
 import { pageMetadata } from '@/lib/seo'
@@ -25,6 +25,11 @@ export async function ContatoView({ locale }: { locale: Locale }) {
           <p className="contact-email">
             <a href={`mailto:${settings.email}`}>{settings.email}</a>
           </p>
+          {settings.social?.whatsapp ? (
+            <p className="contact-whatsapp">
+              <WhatsAppLink settings={settings} locale={locale} />
+            </p>
+          ) : null}
           {settings.city ? <p className="contact-location">{settings.city}</p> : null}
           <SocialLinks settings={settings} locale={locale} className="social-links social-links--inline" />
         </div>

@@ -78,7 +78,7 @@ export async function ObraView({ locale, slug }: { locale: Locale; slug: string 
   if (w.status === 'colecao-particular' || w.status === 'vendida') action = { href: contact(t.subjects.commission), label: t.commissionSimilar }
 
   return (
-    <Page settings={settings} locale={locale} path={path} current="portfolio">
+    <Page settings={settings} locale={locale} path={path} current="portfolio" whatsappText={t.whatsappAbout(w.title)}>
       <div className="container">
         <Breadcrumb items={crumbs} locale={locale} />
       </div>

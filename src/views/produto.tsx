@@ -50,7 +50,7 @@ export async function ProdutoView({ locale, slug }: { locale: Locale; slug: stri
     [path, p.name],
   ]
   return (
-    <Page settings={settings} locale={locale} path={path} current="produtos">
+    <Page settings={settings} locale={locale} path={path} current="produtos" whatsappText={t.whatsappAbout(p.name)}>
       <div className="container">
         <Breadcrumb items={crumbs} locale={locale} />
       </div>

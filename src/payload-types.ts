@@ -1132,6 +1132,10 @@ export interface Configuracoe {
      * O ícone só aparece quando houver um link.
      */
     pinterest?: string | null;
+    /**
+     * Link do WhatsApp, no formato https://wa.me/55 + DDD + número (ex.: https://wa.me/5511983072921). O botão flutuante só aparece quando houver um link.
+     */
+    whatsapp?: string | null;
   };
   footerText?: string | null;
   person?: {
@@ -1402,6 +1406,7 @@ export interface ConfiguracoesSelect<T extends boolean = true> {
         instagram?: T;
         etsy?: T;
         pinterest?: T;
+        whatsapp?: T;
       };
   footerText?: T;
   person?:
