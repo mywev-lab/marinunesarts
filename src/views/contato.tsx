@@ -80,6 +80,19 @@ export async function ContatoView({ locale }: { locale: Locale }) {
             </select>
           </div>
           <div className="form-row">
+            <label htmlFor="moldura">
+              {f.frame} <span className="optional">{f.optional}</span>
+            </label>
+            <select id="moldura" name="moldura" defaultValue="">
+              <option value="">{f.frameNone}</option>
+              {f.frameOptions.map((o) => (
+                <option key={o} value={o}>
+                  {o}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-row">
             <label htmlFor="mensagem">{f.message}</label>
             <textarea id="mensagem" name="mensagem" rows={6} required />
           </div>

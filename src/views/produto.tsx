@@ -99,6 +99,7 @@ export async function ProdutoView({ locale, slug }: { locale: Locale; slug: stri
               </a>
             )}
           </div>
+          {isPrint ? <p className="work-note">{t.frameNote}</p> : null}
           {!isPrint && g.purchaseNote ? <p className="work-note">{g.purchaseNote}</p> : null}
           {works.length ? (
             <p className="work-read">

@@ -117,10 +117,11 @@
     };
     setSelect("assunto", params.get("assunto"));
     setSelect("obra", params.get("obra"));
+    setSelect("moldura", params.get("moldura"));
 
     const formNote = document.getElementById("form-note");
     // textos no idioma da página (atributos data-* do formulário)
-    let labels = { name: "Nome", email: "E-mail", subject: "Assunto", work: "Obra ou produto", message: "Mensagem" };
+    let labels = { name: "Nome", email: "E-mail", subject: "Assunto", work: "Obra ou produto", frame: "Moldura", message: "Mensagem" };
     try { labels = Object.assign(labels, JSON.parse(contactForm.dataset.labels || "{}")); } catch (e) {}
     contactForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -134,7 +135,7 @@
       const obra = data.get("obra");
       const subject = encodeURIComponent(`[Site] ${data.get("assunto")}${obra ? " — " + obra : ""}`);
       const body = encodeURIComponent(
-        `${labels.name}: ${data.get("nome")}\n${labels.email}: ${data.get("email")}\n${labels.subject}: ${data.get("assunto")}\n${labels.work}: ${obra || "—"}\n\n${labels.message}:\n${data.get("mensagem")}`
+        `${labels.name}: ${data.get("nome")}\n${labels.email}: ${data.get("email")}\n${labels.subject}: ${data.get("assunto")}\n${labels.work}: ${obra || "—"}\n${labels.frame}: ${data.get("moldura") || "—"}\n\n${labels.message}:\n${data.get("mensagem")}`
       );
       window.location.href = `mailto:${contactForm.dataset.email || CONTACT_EMAIL}?subject=${subject}&body=${body}`;
       formNote.textContent = contactForm.dataset.opening || "Abrindo o seu aplicativo de e-mail para concluir o envio.";
