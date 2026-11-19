@@ -19,6 +19,7 @@ import * as migration_20261116_210000_mockups_colecoes from './20261116_210000_m
 import * as migration_20261116_220000_prints_moldura from './20261116_220000_prints_moldura';
 import * as migration_20261116_230000_whatsapp from './20261116_230000_whatsapp';
 import * as migration_20261116_230500_whatsapp_link from './20261116_230500_whatsapp_link';
+import * as migration_20261119_160000_moldura_sem_preta from './20261119_160000_moldura_sem_preta';
 
 export const migrations = [
   {
@@ -125,5 +126,10 @@ export const migrations = [
     up: migration_20261116_230500_whatsapp_link.up,
     down: migration_20261116_230500_whatsapp_link.down,
     name: '20261116_230500_whatsapp_link',
+  },
+  {
+    up: migration_20261119_160000_moldura_sem_preta.up,
+    down: migration_20261119_160000_moldura_sem_preta.down,
+    name: '20261119_160000_moldura_sem_preta',
   },
 ];
