@@ -124,6 +124,9 @@ export async function up({ payload, req }: MigrateUpArgs): Promise<void> {
       req,
       context: ctx,
     })
+    // O plugin de armazenamento guarda o primeiro arquivo enviado em req.context e o reenviaria nas próximas
+    // imagens (ver 20261120_120000_releituras_imagens): limpa aqui para cada releitura usar o próprio arquivo.
+    if (req.context) delete (req.context as Record<string, unknown>)._payloadCloudStorage
 
     // ---------- obra ----------
     const obra = await payload.create({
